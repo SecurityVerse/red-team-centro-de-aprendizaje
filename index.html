@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Red Team – Centro de aprendizaje</title>
+<style>
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --surface2:#eef1f4; --line:#dde3ea;
+  --text:#10151d; --muted:#5b6675; --soft:#e8edf2;
+  --accent:#0a7a4b; --accent2:#b42318; --warn:#b54708; --ok:#067647;
+  --code-bg:#0d1117; --code-text:#e6edf3; --code-green:#3fb950; --code-amber:#d29922; --code-blue:#79c0ff;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 8px 28px rgba(16,24,40,.08);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b0e13; --surface:#12161d; --surface2:#171c25; --line:#232b38;
+    --text:#e6edf3; --muted:#9aa7b8; --soft:#1b222d;
+    --accent:#35d07f; --accent2:#ff6b5e; --warn:#f5b04c; --ok:#35d07f;
+    --shadow:0 8px 28px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:var(--accent);text-decoration:none}
+button,input,textarea,select{font:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;gap:10px;align-items:center;min-width:0;flex:1 1 260px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent);flex:none}
+.brand strong{font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.brand span{display:block;font-size:12px;color:var(--muted);letter-spacing:0;text-transform:none;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}
+.pill{font-size:12px;border:1px solid var(--line);background:var(--surface2);padding:5px 9px;border-radius:999px;color:var(--muted);white-space:nowrap}
+@media(max-width:560px){.pill{display:none}.topbar-inner{padding:10px 12px}}
+.layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:18px;padding:16px}
+@media(max-width:860px){.layout{grid-template-columns:1fr;padding:12px}.side{position:static!important}.nav{display:flex;overflow:auto;gap:8px;padding-bottom:4px}.nav button{white-space:nowrap}}
+.side{position:sticky;top:66px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+.side h3{margin:6px 4px 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.nav{display:grid;gap:6px}
+.nav button{appearance:none;border:1px solid transparent;background:transparent;text-align:left;padding:9px 10px;border-radius:10px;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.nav button.active{background:var(--soft);border-color:var(--line);font-weight:650}
+.nav small{color:var(--muted);font-size:11px}
+.progress{margin-top:14px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.progress b{font-size:13px}
+.bar{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin:8px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.main{min-width:0;display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 6px;font-size:22px;line-height:1.2;letter-spacing:-.02em}
+.card h3{margin:18px 0 8px;font-size:16px}
+.card p{margin:8px 0;color:var(--text)}
+.muted{color:var(--muted)!important}
+.small{font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface2)}
+.stat b{font-size:22px;display:block;line-height:1}
+.stat span{font-size:12px;color:var(--muted)}
+.phase{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.phase-head{display:flex;gap:12px;padding:14px;align-items:flex-start;background:var(--surface2);border-bottom:1px solid var(--line)}
+.phase-num{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--text);color:var(--bg);font-weight:800;flex:none}
+.phase-head h3{margin:0;font-size:17px}
+.phase-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.lesson{padding:14px;border-top:1px solid var(--line)}
+.lesson:first-of-type{border-top:none}
+.lesson-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.lesson h4{margin:0;font-size:15px}
+.tag{font-size:11px;border:1px solid var(--line);padding:3px 7px;border-radius:999px;color:var(--muted);white-space:nowrap;background:var(--surface)}
+.tag.red{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 35%,var(--line))}
+.tag.green{color:var(--accent)}
+.code{position:relative;background:var(--code-bg);color:var(--code-text);border-radius:12px;padding:40px 12px 12px;margin:10px 0;overflow:auto;border:1px solid #263041}
+.code pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy{position:absolute;top:8px;right:8px;border:1px solid #334155;background:#161b22;color:#e6edf3;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:12px}
+.copy:active{transform:translateY(1px)}
+.callout{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px;background:var(--surface2);margin:12px 0}
+.callout.warn{border-left-color:var(--warn)}
+.callout.red{border-left-color:var(--accent2)}
+.table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;overflow:hidden;border-radius:10px;border:1px solid var(--line)}
+.table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{background:var(--surface2);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+.btn.primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn.small{padding:6px 9px;font-size:12px}
+.btn.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface);margin-top:10px}
+.exercise h4{margin:0 0 6px}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface2);margin-top:10px}
+summary{cursor:pointer;font-weight:650}
+input[type="text"],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:10px}
+textarea{min-height:140px;resize:vertical}
+.kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;padding:1px 5px;border-radius:6px;background:var(--surface2)}
+.footer{color:var(--muted);font-size:12px;text-align:center;padding:18px}
+.hidden{display:none!important}
+.quiz-opt{display:block;width:100%;text-align:left;margin:6px 0}
+.quiz-opt.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--surface))}
+.quiz-opt.wrong{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 10%,var(--surface))}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span><div><strong>Red Team · Centro de aprendizaje</strong><span>Tu blackboard: teoría, ejemplos, labs y ejercicios — todo en tu lab</span></div></div>
+    <span class="pill">Lab cerrado · Nada fuera de tu red</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <h3>Mapa</h3>
+    <nav class="nav" id="nav">
+      <button data-target="inicio" class="active">Inicio <small>hoy</small></button>
+      <button data-target="ruta">Ruta por fases <small>6 fases</small></button>
+      <button data-target="setup">Setup Ollama <small>local</small></button>
+      <button data-target="metodologia">Metodología <small>kill chain</small></button>
+      <button data-target="laboratorio">Laboratorio <small>seguro</small></button>
+      <button data-target="herramientas">Herramientas <small>Kali</small></button>
+      <button data-target="ejercicios">Ejercicios <small>quiz</small></button>
+      <button data-target="glosario">Glosario <small>rápido</small></button>
+      <button data-target="notas">Diario de lab <small>notas</small></button>
+    </nav>
+    <div class="progress">
+      <b>Tu avance</b>
+      <div class="bar"><i id="barFill"></i></div>
+      <div class="small muted"><span id="pct">0%</span> · <span id="doneCount">0</span> lecciones marcadas</div>
+      <div class="small muted" style="margin-top:6px">Marca “Completada” al terminar cada lección. Se guarda solo en esta pestaña.</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- INICIO -->
+    <section class="card section" id="inicio">
+      <h2>Empezamos desde cero, pero con dirección de Red Team.</h2>
+      <p class="muted">No vas a “aprender comandos sueltos”. Vas a aprender a pensar como atacante dentro de <b>tu propio laboratorio</b>: identificar, enumerar, explotar, moverte, documentar y repetir. Esta página es tu pizarra: yo te explico, tú practicas, luego lo revisamos juntos.</p>
+      <div class="grid" style="margin-top:12px">
+        <div class="stat"><b>6</b><span>Fases de ruta</span></div>
+        <div class="stat"><b>18+</b><span>Lecciones con ejemplos</span></div>
+        <div class="stat"><b>100%</b><span>Práctica en lab aislado</span></div>
+      </div>
+      <div class="callout">
+        <b>Regla de oro del lab:</b> todo lo que veas aquí se ejecuta solo contra máquinas que tú creaste (VMs, contenedores, rangos <span class="kbd">192.168.56.0/24</span> o tu red de práctica). Nunca contra sistemas ajenos. Esa línea es lo que separa a un Red Team profesional de un problema legal.
+      </div>
+      <h3>Cómo usar este centro</h3>
+      <p>1) Lee una lección. 2) Copia el comando en tu Kali del lab. 3) Observa la salida. 4) Haz el ejercicio. 5) Marca la lección como completada. Cuando algo no te salga, me traes la salida y lo depuramos.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn primary" data-jump="ruta">Ver la ruta completa</button>
+        <button class="btn" data-jump="setup">Configurar IA local</button>
+        <button class="btn" data-jump="laboratorio">Armar mi lab</button>
+      </div>
+
+      <h3>Orden mental de un pentest (lo que vas a repetir siempre)</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>Reconocimiento → Escaneo → Enumeración → Explotación → Post-explotación → Pivoting → Reporte
+     ¿qué hay?       ¿qué puertos?   ¿qué servicios?   ¿cómo entro?     ¿qué puedo hacer?  ¿a dónde más?   ¿qué aprendí?</pre></div>
+      <p class="small muted">Cada fase de abajo sigue ese orden. Si te pierdes, vuelve a esta línea.</p>
+    </section>
+
+    <!-- RUTA -->
+    <section class="card section hidden" id="ruta">
+      <h2>Ruta Red Team por fases</h2>
+      <p class="muted">De fundamentos a Active Directory y C2. No saltes fases: cada una te da el vocabulario de la siguiente.</p>
+
+      <!-- FASE 1 -->
+      <article class="phase">
+        <div class="phase-head"><div class="phase-num">1</div><div><h3>Fase 1 — Fundamentos que no se negocian</h3><p>Linux, redes y cómo piensa un atacante. Sin esto, todo lo demás es copiar y pegar.</p></div></div>
+
+        <div class="lesson" data-lesson="f1l1">
+          <div class="lesson-top"><h4>1.1 Linux esencial para Red Team</h4><span class="tag green">Fundamento</span></div>
+          <p>En Kali vivirás en la terminal. Necesitas moverte, buscar, filtrar y entender permisos sin pensar.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Navegación y búsqueda rápida
+pwd; ls -la; cd /home/kali; find / -name "*.txt" 2>/dev/null | head
+
+# Ver, filtrar y encadenar
+cat archivo.txt | grep -i "password" | sort -u
+ss -tulpn                # qué está escuchando en tu máquina
+history | tail -20       # tu memoria externa</pre></div>
+          <p><b>Por qué importa:</b> en post-explotación no tendrás GUI. <span class="kbd">grep</span>, <span class="kbd">find</span>, pipes y redirecciones son tus manos.</p>
+          <div class="callout"><b>Ejemplo guiado:</b> crea 3 archivos, escribe “clave” en uno, y encuentra cuál es solo con <span class="kbd">grep -R "clave" .</span>. Si lo logras sin abrir archivos, ya entendiste el flujo.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f1l2">
+          <div class="lesson-top"><h4>1.2 Redes sin humo: IP, puertos, TCP/UDP, DNS</h4><span class="tag green">Fundamento</span></div>
+          <p>Un puerto es una puerta numerada de un servicio. <b>TCP</b> confirma entrega (web, SSH). <b>UDP</b> es rápido y sin confirmación (DNS, SNMP). DNS traduce nombres a IP.</p>
+          <div class="code"><button class="copy">Copiar</button><pre>ip a                     # tus interfaces e IPs
+ip route                 # puerta de enlace
+ping -c 3 192.168.56.101 # ¿responde el objetivo del lab?
+dig @192.168.56.10 ejemplo.local A   # consulta DNS en tu lab
+nc -vz 192.168.56.101 22             # ¿puerto 22 abierto?</pre></div>
+          <p><b>Ejercicio mental:</b> si <span class="kbd">ping</span> falla pero <span class="kbd">nc</span> conecta al 80, ¿el host está caído o solo bloquea ICMP? Respuesta: probablemente bloquea ICMP; el servicio web sí vive. Por eso no confiamos en un solo método.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f1l3">
+          <div class="lesson-top"><h4>1.3 Mentalidad Red Team y metodología</h4><span class="tag">Concepto</span></div>
+          <p>Red Team no es “correr exploits”. Es emular a un adversario real con objetivo: llegar a un activo, probar impacto y dejar evidencia para que el Blue Team mejore.</p>
+          <table class="table"><tr><th>Etapa</th><th>Pregunta</th><th>Entregable</th></tr>
+          <tr><td>Recon</td><td>¿Qué existe?</td><td>Inventario de hosts/servicios</td></tr>
+          <tr><td>Acceso inicial</td><td>¿Cómo entro?</td><td>Vector y evidencia</td></tr>
+          <tr><td>Movimiento</td><td>¿Qué más alcanzo?</td><td>Ruta de pivoting</td></tr>
+          <tr><td>Impacto</td><td>¿Qué se prueba?</td><td>Objetivo alcanzado (simulado)</td></tr></table>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 2 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">2</div><div><h3>Fase 2 — Reconocimiento, escaneo y enumeración</h3><p>Donde se gana o se pierde un pentest. Nmap a fondo y enumeración por servicio.</p></div></div>
+
+        <div class="lesson" data-lesson="f2l1">
+          <div class="lesson-top"><h4>2.1 Nmap como profesional (no como receta)</h4><span class="tag red">Core skill</span></div>
+          <p>Aprende qué hace cada flag antes de ejecutarlo. Esa es la diferencia entre operar y adivinar.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Descubrimiento de hosts en tu red de lab
+nmap -sn 192.168.56.0/24
+
+# Escaneo completo y ruidoso SOLO en lab (aprendizaje)
+nmap -sS -sV -sC -p- -T4 -oA escaneo_lab 192.168.56.101
+
+# -sS SYN stealth | -sV versiones | -sC scripts seguros | -p- todos los puertos
+# -oA guarda en todos los formatos para tu reporte</pre></div>
+          <p><b>Lectura de salida:</b> busca <i>open</i>, servicio y versión. Una versión vieja (ej. Apache 2.4.49) es una pista para investigar CVE en tu lab, no una invitación fuera de él.</p>
+          <div class="callout warn"><b>Stealth vs. aprendizaje:</b> en tu lab usa escaneos claros para aprender. El sigilo (<span class="kbd">-T2</span>, fragmentación) se estudia después, cuando entiendas el ruido que generas.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l2">
+          <div class="lesson-top"><h4>2.2 Enumeración por servicio</h4><span class="tag red">Core skill</span></div>
+          <p>Cada puerto abierto es una conversación. Aprende a preguntar bien.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Web (80/443): qué tecnología, qué rutas
+whatweb http://192.168.56.101
+gobuster dir -u http://192.168.56.101 -w /usr/share/wordlists/dirb/common.txt
+
+# SMB (445): shares y usuarios (solo tu VM)
+smbclient -L //192.168.56.101 -N
+enum4linux -a 192.168.56.101
+
+# DNS: transfiere zona solo si tu lab lo permite
+dig axfr @192.168.56.10 midominio.local</pre></div>
+          <p><b>Ejemplo real de lab:</b> si Gobuster revela <span class="kbd">/admin</span> y WhatWeb dice PHP 7.2, tu hipótesis es: panel viejo → credenciales por defecto de práctica / error de configuración. Documentas y pruebas en la VM vulnerable.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l3">
+          <div class="lesson-top"><h4>2.3 OSINT y reconocimiento pasivo (concepto)</h4><span class="tag">Concepto</span></div>
+          <p>Antes de tocar un objetivo, ya hay información pública: DNS, certificados, metadatos, repositorios. En Red Team esto define el perímetro. Lo practicas con dominios de laboratorio y rangos documentados, no con terceros.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 3 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">3</div><div><h3>Fase 3 — Explotación en laboratorio</h3><p>Vulnerabilidades web, Metasploit y DVWA. Todo contra VMs intencionalmente vulnerables.</p></div></div>
+
+        <div class="lesson" data-lesson="f3l1">
+          <div class="lesson-top"><h4>3.1 Vulnerabilidades web con DVWA</h4><span class="tag red">Lab</span></div>
+          <p>DVWA es tu gimnasio. Empieza en nivel <i>low</i>, entiende el código, luego sube dificultad.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Flujo en DVWA (tu contenedor/VM)
+1) SQL Injection: entiende cómo la consulta concatena tu input
+2) XSS: observa dónde se refleja tu texto en la página
+3) Command Injection: mira por qué un ";" cambia el sentido del comando
+4) File Upload: qué valida (y qué no) el servidor</pre></div>
+          <p><b>Regla de aprendizaje:</b> por cada vuln, escribe: causa raíz, impacto y mitigación. Eso te forma como Red Team que ayuda a corregir, no solo a romper.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l2">
+          <div class="lesson-top"><h4>3.2 Metasploit Framework (en tu lab)</h4><span class="tag red">Lab</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre>msfconsole
+search type:exploit name:eternalblue   # ejemplo histórico para estudiar
+use exploit/windows/smb/ms17_010_eternalblue
+show options
+set RHOSTS 192.168.56.101              # SOLO tu VM vulnerable
+check
+# En clase practicamos con Metasploitable y VMs de tu lab, paso a paso</pre></div>
+          <p><b>Importante:</b> Metasploit es un marco de trabajo, no un botón mágico. Aprenderás a leer el módulo, entender el target y validar antes de ejecutar.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l3">
+          <div class="lesson-top"><h4>3.3 Contraseñas y autenticación (lab)</h4><span class="tag">Concepto</span></div>
+          <p>Hash vs. cifrado, sal (salt), y por qué reutilizar contraseñas derrumba empresas. Prácticas solo con hashes generados en tu lab y wordlists de estudio.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Crear un hash de práctica y entender su formato
+echo -n "redteam123" | md5sum
+echo -n "redteam123" | sha256sum
+# Luego comparas: ¿qué cambia con salt? ¿por qué bcrypt es distinto?</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 4 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">4</div><div><h3>Fase 4 — Post-explotación y pivoting</h3><p>Ya entraste. Ahora: estabilizar, enumerar por dentro y moverte con intención.</p></div></div>
+
+        <div class="lesson" data-lesson="f4l1">
+          <div class="lesson-top"><h4>4.1 Enumeración interna y escalada de privilegios (concepto)</h4><span class="tag">Concepto</span></div>
+          <p>Al caer en una máquina del lab, preguntas: ¿quién soy? ¿qué puedo ejecutar? ¿qué hay en red desde aquí? En Linux miras permisos SUID, cron, sudo; en Windows, servicios y configuraciones. Siempre con checklists y notas.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Checklist Linux (tu VM comprometida de práctica)
+whoami; id; hostname; ip a
+sudo -l
+find / -perm -4000 2>/dev/null | head -20
+cat /etc/crontab; ls -la /etc/cron*</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f4l2">
+          <div class="lesson-top"><h4>4.2 Pivoting y túneles (lab)</h4><span class="tag">Concepto</span></div>
+          <p>Pivoting es usar una máquina comprometida como puente hacia otra red que no alcanzabas. En tu lab lo practicas entre dos VMs con redes distintas (ej. Host-Only + NAT) y documentas cada salto.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 5 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">5</div><div><h3>Fase 5 — Active Directory (el plato fuerte empresarial)</h3><p>GOAD, BloodHound, Kerberoasting y AS-REP Roasting — en un dominio que tú montas.</p></div></div>
+
+        <div class="lesson" data-lesson="f5l1">
+          <div class="lesson-top"><h4>5.1 Cómo piensa AD: dominio, Kerberos, LDAP, SMB</h4><span class="tag red">AD</span></div>
+          <p>AD centraliza identidad. Kerberos reparte tickets; si un ticket se puede pedir y es débil, se puede atacar <i>offline</i> en el lab. BloodHound dibuja relaciones: quién puede llegar a Domain Admin sin “hackear” nada raro, solo abusando permisos.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f5l2">
+          <div class="lesson-top"><h4>5.2 GOAD: tu laboratorio de AD</h4><span class="tag red">AD Lab</span></div>
+          <p>GOAD (Game of Active Directory) te da un dominio vulnerable listo para practicar enumeración, abuso de ACLs y movimiento lateral entre VMs. Lo montas aislado, con snapshots, y reinicias cuando quieras.</p>
+          <div class="callout"><b>Meta de esta fase:</b> partir de un usuario de dominio sin privilegios en GOAD y, siguiendo el grafo de BloodHound, llegar a Domain Admin documentando cada abuso de permiso.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f5l3">
+          <div class="lesson-top"><h4>5.3 Kerberoasting y AS-REP Roasting (concepto de lab)</h4><span class="tag">Concepto</span></div>
+          <p>Son ataques a cómo Kerberos entrega tickets cifrados con claves derivadas de contraseñas. En tu GOAD los practicas con cuentas creadas para eso, entiendes la telemetría que generan y cómo se detectan (eventos 4769/4768 anómalos).</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 6 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">6</div><div><h3>Fase 6 — Evasión, C2 y operación completa</h3><p>Cuando ya dominas lo anterior: persistencia en lab, C2 y reporte profesional.</p></div></div>
+
+        <div class="lesson" data-lesson="f6l1">
+          <div class="lesson-top"><h4>6.1 Command & Control (C2) en laboratorio</h4><span class="tag">Avanzado</span></div>
+          <p>Un C2 es el canal por el que un operador controla agentes en máquinas del lab. Estudiarás arquitectura, beaconing y detección. Todo entre tus VMs, con logs abiertos para aprender a defender.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f6l2">
+          <div class="lesson-top"><h4>6.2 Evasión y OPSEC (conceptos)</h4><span class="tag">Avanzado</span></div>
+          <p>No es “ser invisible”, es entender qué ruido dejas: procesos, red, disco, memoria. En el lab comparas una acción ruidosa vs. una cuidadosa y miras qué ve el defensor.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f6l3">
+          <div class="lesson-top"><h4>6.3 Reporte Red Team que sí sirve</h4><span class="tag green">Profesional</span></div>
+          <p>Un buen reporte cuenta una historia: objetivo, ruta, evidencia, impacto y recomendaciones priorizadas. Sin eso, el ejercicio no cambia nada en la empresa.</p>
+          <table class="table"><tr><th>Sección</th><th>Qué lleva</th></tr><tr><td>Resumen</td><td>Objetivo y si se alcanzó</td></tr><tr><td>Ruta de ataque</td><td>Paso a paso con tiempos</td></tr><tr><td>Evidencia</td><td>Capturas, logs, hashes</td></tr><tr><td>Recomendaciones</td><td>Arreglos por impacto/esfuerzo</td></tr></table>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- SETUP -->
+    <section class="card section hidden" id="setup">
+      <h2>Setup: Ollama + WhiteRabbitNeo en tu máquina</h2>
+      <p class="muted">Tu IA local es un asistente de lab, no un reemplazo de estudiar. Úsala para explicar salidas, no para copiar comandos a ciegas. Como tu equipo no es muy potente, corre el modelo pequeño y apoya el aprendizaje fuerte aquí.</p>
+
+      <h3>Ruta recomendada para hardware modesto</h3>
+      <table class="table"><tr><th>RAM</th><th>Modelo</th><th>Uso</th></tr>
+      <tr><td>8 GB</td><td>7B cuantizado (~4–5 GB)</td><td>Preguntas puntuales, explicar flags, interpretar salidas</td></tr>
+      <tr><td>16 GB</td><td>13B–14B (~9 GB)</td><td>Mejor razonamiento, sesiones más largas</td></tr>
+      <tr><td>24 GB+</td><td>32B</td><td>Salto grande en calidad (si algún día actualizas)</td></tr></table>
+
+      <h3>Instalación paso a paso</h3>
+      <div class="code"><button class="copy">Copiar</button><pre># 1) Instala Ollama desde https://ollama.com  (Mac: app | Linux: instalador)
+
+# 2) Descarga un modelo enfocado en seguridad (elige el tag según tu RAM)
+ollama pull whiterabbitneo
+
+# 3) Prueba rápida
+ollama run whiterabbitneo "Explícame qué hace nmap -sV paso a paso, como a un principiante"
+
+# 4) (Opcional) Interfaz tipo chat con Docker: Open WebUI
+# 5) (Nivel siguiente) AnythingLLM para RAG con tus notas: PTES, OWASP, MITRE ATT&CK</pre></div>
+
+      <div class="callout">
+        <b>Cómo preguntarle bien a un modelo pequeño:</b> dale contexto y pide pasos. Funciona mejor “Estoy en mi lab, nmap me dio Apache 2.4.49 en 192.168.56.101, ¿qué significa y qué investigo después?” que “hackea esto”.
+      </div>
+
+      <h3>Enfoque híbrido (el tuyo)</h3>
+      <p><b>Aquí / nube</b> para teoría y metodología (explicaciones largas, planes, troubleshooting). <b>Local sin filtros</b> para lo puntual del lab que un asistente generalista bloquearía. Esa combinación es la que usa la mayoría con hardware limitado.</p>
+      <p class="small muted">Si luego quieres probar un modelo grande sin comprar equipo, se puede rentar GPU por horas (ej. RunPod) y correr un 32B/70B temporalmente.</p>
+    </section>
+
+    <!-- METODOLOGIA -->
+    <section class="card section hidden" id="metodologia">
+      <h2>Metodología de pentest (tu mapa permanente)</h2>
+      <p class="muted">PTES + Kill Chain + MITRE ATT&CK, en lenguaje simple. Vuelve aquí cuando no sepas “qué sigue”.</p>
+      <table class="table">
+        <tr><th>Fase</th><th>Objetivo</th><th>Preguntas guía</th><th>Salida</th></tr>
+        <tr><td>1. Reconocimiento</td><td>Descubrir superficie</td><td>¿Qué hosts, dominios y servicios existen en mi lab?</td><td>Inventario</td></tr>
+        <tr><td>2. Escaneo</td><td>Puertos y versiones</td><td>¿Qué está abierto y qué versión corre?</td><td>Mapa de servicios</td></tr>
+        <tr><td>3. Enumeración</td><td>Detalles útiles</td><td>¿Usuarios, shares, rutas, tecnología?</td><td>Hipótesis de ataque</td></tr>
+        <tr><td>4. Explotación</td><td>Acceso inicial</td><td>¿Qué hipótesis se confirma en la VM vulnerable?</td><td>Shell / acceso</td></tr>
+        <tr><td>5. Post-explotación</td><td>Valor y movimiento</td><td>¿Qué puedo hacer y a qué más llego?</td><td>Rutas de pivoting</td></tr>
+        <tr><td>6. Reporte</td><td>Comunicar impacto</td><td>¿Qué se probó y cómo se corrige?</td><td>Informe accionable</td></tr>
+      </table>
+      <div class="callout warn"><b>Error clásico de principiante:</b> explotar antes de enumerar. La enumeración te ahorra horas y te evita ruido innecesario, incluso en el lab.</div>
+      <h3>Checklist de sesión (copia y pega en tus notas)</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>[ ] Alcance del lab definido (IPs/VMs)
+[ ] Snapshot tomado antes de practicar
+[ ] Escaneo guardado (-oA)
+[ ] Hipótesis escrita antes de explotar
+[ ] Evidencia guardada (fecha/hora)
+[ ] Mitigación anotada por cada hallazgo
+[ ] Lab restaurado / apagado al final</pre></div>
+    </section>
+
+    <!-- LABORATORIO -->
+    <section class="card section hidden" id="laboratorio">
+      <h2>Tu laboratorio seguro (diseño recomendado)</h2>
+      <p class="muted">Un lab bueno es aburrido por fuera y peligroso solo por dentro: red aislada, snapshots y máquinas hechas para romperse.</p>
+
+      <div class="grid">
+        <div class="stat"><b>Kali Linux</b><span>Tu máquina atacante (VM)</span></div>
+        <div class="stat"><b>Metasploitable / DVWA</b><span>Víctimas de práctica</span></div>
+        <div class="stat"><b>GOAD</b><span>Dominio AD para Fase 5</span></div>
+      </div>
+
+      <h3>Red sugerida</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>Red Host-Only / Interna: 192.168.56.0/24  (sin salida a internet para víctimas)
+Kali:        192.168.56.5   (puede tener NAT aparte para actualizar)
+Víctima 1:   192.168.56.101 (Metasploitable)
+Víctima Web: 192.168.56.102 (DVWA)
+AD Lab:      red separada de GOAD según su guía</pre></div>
+
+      <h3>Reglas del lab</h3>
+      <p>1) Víctimas sin internet. 2) Snapshot antes de cada práctica. 3) Nada de escanear fuera de <span class="kbd">192.168.56.0/24</span> o la red de GOAD. 4) Documenta IP, hora y comando de cada prueba. 5) Al terminar, restaura o apaga.</p>
+
+      <div class="callout red"><b>Línea roja:</b> si una IP no está en tu lista de lab, no se toca. Esa disciplina es parte del entrenamiento Red Team.</div>
+
+      <h3>Kit inicial en Kali</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>sudo apt update
+# Herramientas que usarás en la ruta (muchas ya vienen en Kali)
+# nmap, gobuster, whatweb, enum4linux, smbclient, msfconsole, bloodhound
+which nmap gobuster whatweb msfconsole</pre></div>
+    </section>
+
+    <!-- HERRAMIENTAS -->
+    <section class="card section hidden" id="herramientas">
+      <h2>Herramientas Kali por fase</h2>
+      <p class="muted">No memorices 300 herramientas. Domina pocas y entiende qué problema resuelve cada una.</p>
+      <input type="text" id="toolSearch" placeholder="Buscar herramienta… (ej. nmap, gobuster, bloodhound)"/>
+      <table class="table" id="toolTable">
+        <tr><th>Herramienta</th><th>Fase</th><th>Para qué</th><th>Ejemplo en lab</th></tr>
+        <tr><td><b>nmap</b></td><td>Escaneo</td><td>Puertos, servicios, scripts</td><td>nmap -sV -sC 192.168.56.101</td></tr>
+        <tr><td><b>gobuster</b></td><td>Enumeración web</td><td>Descubrir rutas</td><td>gobuster dir -u http://192.168.56.102 -w common.txt</td></tr>
+        <tr><td><b>whatweb</b></td><td>Enumeración web</td><td>Fingerprint de tecnología</td><td>whatweb http://192.168.56.102</td></tr>
+        <tr><td><b>enum4linux</b></td><td>Enumeración SMB</td><td>Usuarios/shares en Windows/Samba</td><td>enum4linux -a 192.168.56.101</td></tr>
+        <tr><td><b>smbclient</b></td><td>Enumeración SMB</td><td>Listar recursos compartidos</td><td>smbclient -L //192.168.56.101 -N</td></tr>
+        <tr><td><b>msfconsole</b></td><td>Explotación</td><td>Framework de exploits (lab)</td><td>search + use + set RHOSTS (solo VM)</td></tr>
+        <tr><td><b>bloodhound</b></td><td>AD</td><td>Grafo de relaciones y privilegios</td><td>Analizar ruta a Domain Admin en GOAD</td></tr>
+        <tr><td><b>wireshark</b></td><td>Análisis</td><td>Ver tráfico y entender protocolos</td><td>Capturar tu propio escaneo en el lab</td></tr>
+      </table>
+      <p class="small muted">Tip: filtra con el buscador. En clase iremos herramienta por herramienta con salidas reales de tu lab.</p>
+    </section>
+
+    <!-- EJERCICIOS -->
+    <section class="card section hidden" id="ejercicios">
+      <h2>Ejercicios y comprobación</h2>
+      <p class="muted">Hazlos en orden. Si fallas, vuelve a la lección indicada: así se aprende.</p>
+
+      <div class="exercise">
+        <h4>Ejercicio 1 — Lee un escaneo (Fase 2)</h4>
+        <p>Te doy una salida simulada de lab: <span class="kbd">22/tcp open ssh OpenSSH 8.9</span>, <span class="kbd">80/tcp open http Apache 2.4.49</span>, <span class="kbd">445/tcp open microsoft-ds</span>. ¿Qué enumeras primero y por qué?</p>
+        <details><summary>Ver pista y solución</summary><p>No hay una única respuesta, pero un orden sólido es: web (WhatWeb/Gobuster) por la versión vieja de Apache, SMB (enum4linux) por shares/usuarios, y SSH al final (suele requerir credenciales). Lo importante es justificar con la versión y el servicio, no adivinar.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 2 — Linux rápido (Fase 1)</h4>
+        <p>En tu Kali crea una carpeta <span class="kbd">lab1</span> con 3 archivos y encuentra cuál contiene la palabra “secreto” sin abrirlos uno por uno.</p>
+        <div class="code"><button class="copy">Copiar</button><pre>mkdir -p ~/lab1 && cd ~/lab1
+echo "hola" > a.txt; echo "secreto de lab" > b.txt; echo "nada" > c.txt
+grep -R "secreto" .</pre></div>
+        <details><summary>¿Qué debiste ver?</summary><p><span class="kbd">./b.txt:secreto de lab</span>. Si lo viste, ya usas búsqueda recursiva como en post-explotación.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 3 — Metodología (transversal)</h4>
+        <p>Ordena: Explotación, Reconocimiento, Reporte, Enumeración, Escaneo, Post-explotación.</p>
+        <details><summary>Ver orden correcto</summary><p>Reconocimiento → Escaneo → Enumeración → Explotación → Post-explotación → Reporte. Si explotaste antes de enumerar, anota qué te faltó saber.</p></details>
+      </div>
+
+      <h3>Quiz rápido (toca una opción)</h3>
+      <div id="quiz"></div>
+    </section>
+
+    <!-- GLOSARIO -->
+    <section class="card section hidden" id="glosario">
+      <h2>Glosario rápido</h2>
+      <p class="muted">Definiciones cortas, en español simple. Busca mientras practicas.</p>
+      <input type="text" id="glossSearch" placeholder="Buscar término… (ej. Kerberos, pivoting, C2)"/>
+      <div id="glossList" style="margin-top:12px;display:grid;gap:10px"></div>
+    </section>
+
+    <!-- NOTAS -->
+    <section class="card section hidden" id="notas">
+      <h2>Diario de laboratorio</h2>
+      <p class="muted">Escribe aquí tus hallazgos de cada sesión: fecha, IP del lab, comando, salida y qué aprendiste. Al final puedes descargar el texto para guardarlo donde quieras.</p>
+      <textarea id="notes" placeholder="Ej.: 2026-10-15 — Lab 192.168.56.101 — nmap -sV reveló Apache 2.4.49. Hipótesis: … Resultado: … Mitigación: …"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn primary" id="downloadNotes">Descargar notas (.txt)</button>
+        <button class="btn" id="clearNotes">Limpiar</button>
+      </div>
+      <div class="callout" style="margin-top:12px"><b>Plantilla por hallazgo:</b> Objetivo (IP de lab) · Puerto/servicio · Evidencia · Impacto · Mitigación · Siguiente paso. Úsala siempre y tu reporte de Fase 6 saldrá casi solo.</div>
+    </section>
+
+    <div class="footer">Centro de aprendizaje Red Team — práctica solo en laboratorio aislado. Trae tus salidas y seguimos en clase.</div>
+  </main>
+</div>
+
+<script>
+const sections=[...document.querySelectorAll('.section')];
+const navBtns=[...document.querySelectorAll('#nav button')];
+function show(id){
+  sections.forEach(s=>s.classList.toggle('hidden',s.id!==id));
+  navBtns.forEach(b=>b.classList.toggle('active',b.dataset.target===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+navBtns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.target)));
+document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.jump)));
+
+// Copiar código
+document.querySelectorAll('.code').forEach(block=>{
+  const btn=block.querySelector('.copy');
+  const pre=block.querySelector('pre');
+  if(!btn||!pre) return;
+  btn.addEventListener('click',async()=>{
+    try{ await navigator.clipboard.writeText(pre.innerText); btn.textContent='Copiado'; setTimeout(()=>btn.textContent='Copiar',1200);}catch(e){ btn.textContent='Selecciona el texto'; setTimeout(()=>btn.textContent='Copiar',1200);}
+  });
+});
+
+// Progreso en memoria (solo esta pestaña)
+const done=new Set();
+const total=document.querySelectorAll('[data-lesson]').length;
+function refreshProgress(){
+  const pct= total? Math.round(done.size/total*100):0;
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('doneCount').textContent=done.size;
+  document.querySelectorAll('[data-lesson]').forEach(el=>{
+    const id=el.dataset.lesson;
+    const btn=el.querySelector('.mark');
+    if(!btn) return;
+    const isDone=done.has(id);
+    btn.textContent=isDone?'Completada':'Marcar completada';
+    btn.classList.toggle('done',isDone);
+  });
+}
+document.querySelectorAll('.mark').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const lesson=btn.closest('[data-lesson]');
+    if(!lesson) return;
+    const id=lesson.dataset.lesson;
+    done.has(id)?done.delete(id):done.add(id);
+    refreshProgress();
+  });
+});
+refreshProgress();
+
+// Buscador herramientas
+const toolSearch=document.getElementById('toolSearch');
+if(toolSearch){
+  toolSearch.addEventListener('input',()=>{
+    const q=toolSearch.value.toLowerCase();
+    document.querySelectorAll('#toolTable tr').forEach((tr,i)=>{
+      if(i===0) return;
+      tr.style.display=tr.innerText.toLowerCase().includes(q)?'':'none';
+    });
+  });
+}
+
+// Glosario
+const gloss=[
+  ['Reconocimiento','Descubrir qué existe: hosts, dominios, servicios. Puede ser pasivo (sin tocar) o activo (interactuando).'],
+  ['Enumeración','Sacar detalle útil: usuarios, shares, rutas web, versiones exactas. Es donde nacen las hipótesis.'],
+  ['Explotación','Confirmar una vulnerabilidad en la VM del lab para obtener acceso. Siempre con hipótesis previa.'],
+  ['Post-explotación','Qué puedes hacer ya dentro: enumerar, estabilizar, buscar rutas y evidencia.'],
+  ['Pivoting','Usar una máquina comprometida del lab como puente hacia otra red interna.'],
+  ['Kerberos','Sistema de tickets de Active Directory. Si un ticket es débil, puede atacarse offline en el lab.'],
+  ['BloodHound','Herramienta que dibuja relaciones en AD para encontrar rutas a privilegios altos.'],
+  ['C2 (Command & Control)','Canal de control de agentes en un ejercicio Red Team. Se estudia en lab con logs abiertos.'],
+  ['GOAD','Laboratorio de Active Directory vulnerable para practicar AD de forma segura.'],
+  ['DVWA','Aplicación web intencionalmente vulnerable para aprender XSS, SQLi, upload y más.'],
+  ['OPSEC','Cuidado operacional: qué ruido dejas y qué puede detectar el defensor.'],
+  ['Payload','Código que se ejecuta tras explotar una vuln en el lab. Se estudia solo contra tus VMs.']
+];
+const glossList=document.getElementById('glossList');
+function renderGloss(q=''){
+  if(!glossList) return;
+  glossList.innerHTML=gloss.filter(([t,d])=>(t+' '+d).toLowerCase().includes(q.toLowerCase())).map(([t,d])=>`<div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)"><b>${t}</b><div class="muted" style="margin-top:4px">${d}</div></div>`).join('') || '<p class="muted">Sin resultados. Prueba con “Kerberos” o “pivoting”.</p>';
+}
+renderGloss();
+const glossSearch=document.getElementById('glossSearch');
+if(glossSearch) glossSearch.addEventListener('input',()=>renderGloss(glossSearch.value));
+
+// Quiz
+const quizData=[
+  {q:'Si ping falla pero el puerto 80 responde, ¿qué concluyes?',opts:['El host está apagado','Puede bloquear ICMP y el servicio web vive','La red está caída'],a:1,why:'Por eso se escanea por puertos, no solo con ping. (Fase 1.2 / 2.1)'},
+  {q:'¿Qué hace nmap -sV?',opts:['Oculta el escaneo','Detecta versiones de servicios','Borra logs'],a:1,why:'-sV intenta identificar la versión exacta del servicio. (Fase 2.1)'},
+  {q:'Antes de explotar, ¿qué paso te ahorra más tiempo?',opts:['Enumerar a fondo','Probar exploits al azar','Reiniciar la VM'],a:0,why:'La enumeración crea hipótesis. Sin ella, adivinas. (Metodología)'},
+  {q:'¿Dónde practicas Kerberoasting en esta ruta?',opts:['En cualquier empresa','En GOAD, tu AD de laboratorio','En internet público'],a:1,why:'Solo en tu dominio de práctica. (Fase 5)'} 
+];
+const quizEl=document.getElementById('quiz');
+if(quizEl){
+  quizEl.innerHTML=quizData.map((item,i)=>`<div class="exercise" data-quiz="${i}"><h4>${i+1}. ${item.q}</h4>${item.opts.map((o,j)=>`<button class="btn quiz-opt" data-i="${i}" data-j="${j}">${o}</button>`).join('')}<p class="small muted feedback"></p></div>`).join('');
+  quizEl.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const i=+btn.dataset.i, j=+btn.dataset.j;
+      const wrap=btn.closest('[data-quiz]');
+      wrap.querySelectorAll('.quiz-opt').forEach(b=>b.classList.remove('correct','wrong'));
+      const ok=j===quizData[i].a;
+      btn.classList.add(ok?'correct':'wrong');
+      const fb=wrap.querySelector('.feedback');
+      fb.textContent=(ok?'Correcto. ':'No exactamente. ')+quizData[i].why;
+    });
+  });
+}
+
+// Notas: descargar
+const notes=document.getElementById('notes');
+document.getElementById('downloadNotes')?.addEventListener('click',()=>{
+  const text=(notes?.value||'').trim()||'Diario de laboratorio Red Team\n\n(Sin notas todavía)';
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='diario-red-team.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById('clearNotes')?.addEventListener('click',()=>{ if(notes) notes.value=''; });
+</script>
+</body>
+</html>
