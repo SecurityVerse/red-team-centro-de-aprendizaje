@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Red Team – Centro de aprendizaje</title>
+<style>
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --surface2:#eef1f4; --line:#dde3ea;
+  --text:#10151d; --muted:#5b6675; --soft:#e8edf2;
+  --accent:#0a7a4b; --accent2:#b42318; --warn:#b54708; --ok:#067647;
+  --code-bg:#0d1117; --code-text:#e6edf3; --code-green:#3fb950; --code-amber:#d29922; --code-blue:#79c0ff;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 8px 28px rgba(16,24,40,.08);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b0e13; --surface:#12161d; --surface2:#171c25; --line:#232b38;
+    --text:#e6edf3; --muted:#9aa7b8; --soft:#1b222d;
+    --accent:#35d07f; --accent2:#ff6b5e; --warn:#f5b04c; --ok:#35d07f;
+    --shadow:0 8px 28px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:var(--accent);text-decoration:none}
+button,input,textarea,select{font:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;gap:10px;align-items:center;min-width:0;flex:1 1 260px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent);flex:none}
+.brand strong{font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.brand span{display:block;font-size:12px;color:var(--muted);letter-spacing:0;text-transform:none;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}
+.pill{font-size:12px;border:1px solid var(--line);background:var(--surface2);padding:5px 9px;border-radius:999px;color:var(--muted);white-space:nowrap}
+@media(max-width:560px){.pill{display:none}.topbar-inner{padding:10px 12px}}
+.layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:18px;padding:16px}
+@media(max-width:860px){.layout{grid-template-columns:1fr;padding:12px}.side{position:static!important}.nav{display:flex;overflow:auto;gap:8px;padding-bottom:4px}.nav button{white-space:nowrap}}
+.side{position:sticky;top:66px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+.side h3{margin:6px 4px 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.nav{display:grid;gap:6px}
+.nav button{appearance:none;border:1px solid transparent;background:transparent;text-align:left;padding:9px 10px;border-radius:10px;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.nav button.active{background:var(--soft);border-color:var(--line);font-weight:650}
+.nav small{color:var(--muted);font-size:11px}
+.progress{margin-top:14px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.progress b{font-size:13px}
+.bar{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin:8px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.main{min-width:0;display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 6px;font-size:22px;line-height:1.2;letter-spacing:-.02em}
+.card h3{margin:18px 0 8px;font-size:16px}
+.card p{margin:8px 0;color:var(--text)}
+.muted{color:var(--muted)!important}
+.small{font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface2)}
+.stat b{font-size:22px;display:block;line-height:1}
+.stat span{font-size:12px;color:var(--muted)}
+.phase{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.phase-head{display:flex;gap:12px;padding:14px;align-items:flex-start;background:var(--surface2);border-bottom:1px solid var(--line)}
+.phase-num{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--text);color:var(--bg);font-weight:800;flex:none}
+.phase-head h3{margin:0;font-size:17px}
+.phase-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.lesson{padding:14px;border-top:1px solid var(--line)}
+.lesson:first-of-type{border-top:none}
+.lesson-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.lesson h4{margin:0;font-size:15px}
+.tag{font-size:11px;border:1px solid var(--line);padding:3px 7px;border-radius:999px;color:var(--muted);white-space:nowrap;background:var(--surface)}
+.tag.red{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 35%,var(--line))}
+.tag.green{color:var(--accent)}
+.code{position:relative;background:var(--code-bg);color:var(--code-text);border-radius:12px;padding:40px 12px 12px;margin:10px 0;overflow:auto;border:1px solid #263041}
+.code pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.copy{position:absolute;top:8px;right:8px;border:1px solid #334155;background:#161b22;color:#e6edf3;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:12px}
+.copy:active{transform:translateY(1px)}
+.callout{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px;background:var(--surface2);margin:12px 0}
+.callout.warn{border-left-color:var(--warn)}
+.callout.red{border-left-color:var(--accent2)}
+.table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;overflow:hidden;border-radius:10px;border:1px solid var(--line)}
+.table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{background:var(--surface2);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+.btn.primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn.small{padding:6px 9px;font-size:12px}
+.btn.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface);margin-top:10px}
+.exercise h4{margin:0 0 6px}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface2);margin-top:10px}
+summary{cursor:pointer;font-weight:650}
+input[type="text"],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:10px}
+textarea{min-height:140px;resize:vertical}
+.kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;padding:1px 5px;border-radius:6px;background:var(--surface2)}
+.footer{color:var(--muted);font-size:12px;text-align:center;padding:18px}
+.hidden{display:none!important}
+.quiz-opt{display:block;width:100%;text-align:left;margin:6px 0}
+.nav-label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:12px 4px 2px}
+.nav-label:first-child{margin-top:0}
+@media(max-width:860px){.nav-label{flex:none;align-self:center;margin:0 2px}}
+.route-steps{display:grid;gap:8px;margin:12px 0}
+.rstep{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}
+.rstep .n{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none;font-size:14px}
+.rstep p{margin:2px 0 0}
+.lesson.hl{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.quiz-opt.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--surface))}
+.quiz-opt.wrong{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 10%,var(--surface))}
+.lectura{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:14px;overflow:hidden}
+.lectura-head{display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--surface2);border-bottom:1px solid var(--line)}
+.lectura-head h4{margin:0;font-size:16px}
+.lectura-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.lectura-body{padding:14px}
+.lectura-body h5{margin:16px 0 6px;font-size:14px}
+.lectura-body p{margin:7px 0}
+.lectura-body ul{margin:7px 0 7px 18px;padding:0}
+.lectura-body li{margin:4px 0}
+.selfcheck{margin-top:10px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span><div><strong>Red Team · Centro de aprendizaje</strong><span>Tu blackboard: teoría, ejemplos, labs y ejercicios — todo en tu lab</span></div></div>
+    <span class="pill">Lab cerrado · Nada fuera de tu red</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <h3>Mapa — síguelo en orden</h3>
+    <nav class="nav" id="nav">
+      <button data-target="inicio" class="active">Inicio <small>empieza aquí</small></button>
+      <div class="nav-label">Ruta guiada · paso a paso</div>
+      <button data-target="ruta">1 · Ruta por fases <small>6 fases</small></button>
+      <button data-target="laboratorio">2 · Mi laboratorio <small>seguro</small></button>
+      <button data-target="setup">3 · Setup IA local <small>Ollama</small></button>
+      <button data-target="metodologia">4 · Metodología <small>kill chain</small></button>
+      <button data-target="herramientas">5 · Herramientas <small>Kali</small></button>
+      <button data-target="plan12">6 · Plan 12 semanas <small>tu ritmo</small></button>
+      <div class="nav-label">Certificaciones · en este orden</div>
+      <button data-target="cissp">CISSP <small>primero · 8 dominios</small></button>
+      <button data-target="cisa">CISA <small>después · ISACA</small></button>
+      <div class="nav-label">Práctica</div>
+      <button data-target="ejercicios">Ejercicios y quiz <small>preguntas</small></button>
+      <button data-target="glosario">Glosario <small>rápido</small></button>
+      <button data-target="notas">Diario de lab <small>tu evidencia</small></button>
+      <div class="nav-label">Avanzado · modo CISO</div>
+      <button data-target="empresa">Pentest empresa <small>autorizado</small></button>
+      <button data-target="roe">ROE y alcance <small>plantillas</small></button>
+      <button data-target="escenarios">Escenarios reales <small>labs guiados</small></button>
+      <button data-target="checklists">Checklists <small>pro</small></button>
+    </nav>
+    <div class="progress">
+      <b>Tu avance</b>
+      <div class="bar"><i id="barFill"></i></div>
+      <div class="small muted"><span id="pct">0%</span> · <span id="doneCount">0</span> lecciones marcadas</div>
+      <div class="small" id="posHint" style="margin-top:8px"></div>
+      <div class="small muted" style="margin-top:6px">Marca “Completada” al terminar cada lección. Se guarda solo en esta pestaña.</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- INICIO -->
+    <section class="card section" id="inicio">
+      <h2>Empezamos desde cero, pero con dirección de Red Team.</h2>
+      <p class="muted">No vas a “aprender comandos sueltos”. Vas a aprender a pensar como atacante dentro de <b>tu propio laboratorio</b> y, cuando toque, a dirigir un pentest profesional y autorizado en tu empresa como CISO. Y el mismo centro cubre tus dos metas de certificación, <b>en este orden: primero el CISSP</b> (los 8 dominios, con mentalidad de gerente) <b>y después el CISA</b> de ISACA (auditoría de sistemas de información). Identificar, enumerar, explotar, moverte, auditar, documentar, reportar y corregir. Esta página es tu pizarra: yo te explico, tú practicas, luego lo revisamos juntos.</p>
+      <div class="grid" style="margin-top:12px">
+        <div class="stat"><b>3 rutas integradas</b><span>Pentest · CISSP · CISA</span></div>
+        <div class="stat"><b>45</b><span>Lecciones marcables con tu avance</span></div>
+        <div class="stat"><b>35+</b><span>Ejercicios, escenarios y checklists</span></div>
+      </div>
+      <div class="callout warn"><b>Tu rol como CISO cambia el juego:</b> no necesitas ser el que más exploits memoriza; necesitas entender la ruta de ataque completa, hacer las preguntas correctas, validar evidencia, priorizar riesgo de negocio y convertir hallazgos en decisiones de directorio. Por eso este centro ahora mezcla manos en Kali con gobierno, alcance, ROE y reporte ejecutivo.</div>
+      <div class="callout">
+        <b>Regla de oro del lab:</b> todo lo que veas aquí se ejecuta solo contra máquinas que tú creaste (VMs, contenedores, rangos <span class="kbd">192.168.56.0/24</span> o tu red de práctica). Nunca contra sistemas ajenos. Esa línea es lo que separa a un Red Team profesional de un problema legal.
+      </div>
+      <h3>Por dónde empiezo — tu ruta guiada</h3>
+      <p class="muted">No tienes que adivinar el orden. El menú de la izquierda sigue esta misma secuencia; tú solo avanza paso a paso y marca cada lección al cerrarla.</p>
+      <div class="route-steps">
+        <div class="rstep"><div class="n">1</div><div><b>Empieza por la Fase 1 de la ruta de pentest</b><p class="muted small">Linux, redes y mentalidad de atacante. Es la base de todo lo demás, incluidas las dos certificaciones.</p><button class="btn small" data-jump="ruta">Ir a la Fase 1</button></div></div>
+        <div class="rstep"><div class="n">2</div><div><b>Arma tu laboratorio seguro</b><p class="muted small">Tu red aislada de práctica (192.168.56.0/24), Kali y, si quieres, tu IA local con Ollama. Sin lab no hay práctica.</p><button class="btn small" data-jump="laboratorio">Armar mi lab</button> <button class="btn small" data-jump="setup">Setup IA local</button></div></div>
+        <div class="rstep"><div class="n">3</div><div><b>CISSP primero: arranca con el Dominio 1</b><p class="muted small">Seguridad y gestión de riesgos es el dominio de mayor peso (16%) y el más cercano a tu rol de CISO. Las Fases 1–2 de pentest refuerzan el Dominio 4 sin esfuerzo extra.</p><button class="btn small" data-jump="cissp">Estudiar CISSP</button></div></div>
+        <div class="rstep"><div class="n">4</div><div><b>CISA después de aprobar el CISSP</b><p class="muted small">La certificación de auditoría de ISACA se apoya en todo lo anterior: gobierno, riesgo y controles ya los tendrás dominados.</p><button class="btn small" data-jump="cisa">Ver la ruta CISA</button></div></div>
+      </div>
+      <div class="callout">
+        <b>¿Ya empezaste?</b> <span id="nextStep">Tu siguiente paso es la primera lección de la Fase 1.</span>
+        <div style="margin-top:8px"><button class="btn primary" id="continueBtn">Continúa donde ibas</button></div>
+      </div>
+
+      <h3>Cómo usar este centro</h3>
+      <p>1) Lee una lección. 2) Copia el comando en tu Kali del lab. 3) Observa la salida. 4) Haz el ejercicio. 5) Marca la lección como completada. Cuando algo no te salga, me traes la salida y lo depuramos.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn primary" data-jump="ruta">Ver la ruta de pentest</button>
+        <button class="btn" data-jump="cissp">Estudiar CISSP</button>
+        <button class="btn" data-jump="cisa">Estudiar CISA</button>
+        <button class="btn" data-jump="setup">Configurar IA local</button>
+        <button class="btn" data-jump="laboratorio">Armar mi lab</button>
+      </div>
+
+      <h3>Tres metas, un mismo cerebro</h3>
+      <p class="muted">Las tres rutas se refuerzan entre sí. El CISSP te da el marco de gerente, el CISA te convierte en auditor que valida controles con evidencia, y el pentest te da la experiencia práctica que ninguno de los dos exámenes puede darte. Esta tabla es tu mapa de refuerzo cruzado:</p>
+      <table class="table">
+        <tr><th>Tema</th><th>CISSP</th><th>CISA</th><th>Pentest (este centro)</th></tr>
+        <tr><td>Riesgo y gobierno</td><td>Dominio 1</td><td>Dominios 1–2</td><td>Módulos Empresa y ROE</td></tr>
+        <tr><td>Redes y segmentación</td><td>Dominio 4</td><td>Dominio 5</td><td>Fases 1–2</td></tr>
+        <tr><td>Identidad y acceso</td><td>Dominio 5</td><td>Dominio 5</td><td>Fase 5 (Active Directory)</td></tr>
+        <tr><td>Evaluación de seguridad</td><td>Dominio 6</td><td>Dominio 1</td><td>Escenarios y Checklists</td></tr>
+        <tr><td>Operaciones y continuidad</td><td>Dominio 7</td><td>Dominio 4</td><td>Fase 6 (Purple Team)</td></tr>
+      </table>
+
+      <h3>Orden mental de un pentest (lo que vas a repetir siempre)</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>Reconocimiento → Escaneo → Enumeración → Explotación → Post-explotación → Pivoting → Reporte
+     ¿qué hay?       ¿qué puertos?   ¿qué servicios?   ¿cómo entro?     ¿qué puedo hacer?  ¿a dónde más?   ¿qué aprendí?</pre></div>
+      <p class="small muted">Cada fase de abajo sigue ese orden. Si te pierdes, vuelve a esta línea.</p>
+    </section>
+
+    <!-- RUTA -->
+    <section class="card section hidden" id="ruta">
+      <h2>Ruta Red Team por fases</h2>
+      <p class="muted">De fundamentos a Active Directory y C2. No saltes fases: cada una te da el vocabulario de la siguiente.</p>
+
+      <!-- FASE 1 -->
+      <article class="phase">
+        <div class="phase-head"><div class="phase-num">1</div><div><h3>Fase 1 — Fundamentos que no se negocian</h3><p>Linux, redes y cómo piensa un atacante. Sin esto, todo lo demás es copiar y pegar.</p></div></div>
+
+        <div class="lesson" data-lesson="f1l1">
+          <div class="lesson-top"><h4>1.1 Linux esencial para Red Team</h4><span class="tag green">Fundamento</span></div>
+          <p>En Kali vivirás en la terminal. Necesitas moverte, buscar, filtrar y entender permisos sin pensar.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Navegación y búsqueda rápida
+pwd; ls -la; cd /home/kali; find / -name "*.txt" 2>/dev/null | head
+
+# Ver, filtrar y encadenar
+cat archivo.txt | grep -i "password" | sort -u
+ss -tulpn                # qué está escuchando en tu máquina
+history | tail -20       # tu memoria externa</pre></div>
+          <p><b>Por qué importa:</b> en post-explotación no tendrás GUI. <span class="kbd">grep</span>, <span class="kbd">find</span>, pipes y redirecciones son tus manos.</p>
+          <div class="callout"><b>Ejemplo guiado:</b> crea 3 archivos, escribe “clave” en uno, y encuentra cuál es solo con <span class="kbd">grep -R "clave" .</span>. Si lo logras sin abrir archivos, ya entendiste el flujo.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f1l2">
+          <div class="lesson-top"><h4>1.2 Redes sin humo: IP, puertos, TCP/UDP, DNS</h4><span class="tag green">Fundamento</span></div>
+          <p>Un puerto es una puerta numerada de un servicio. <b>TCP</b> confirma entrega (web, SSH). <b>UDP</b> es rápido y sin confirmación (DNS, SNMP). DNS traduce nombres a IP.</p>
+          <div class="code"><button class="copy">Copiar</button><pre>ip a                     # tus interfaces e IPs
+ip route                 # puerta de enlace
+ping -c 3 192.168.56.101 # ¿responde el objetivo del lab?
+dig @192.168.56.10 ejemplo.local A   # consulta DNS en tu lab
+nc -vz 192.168.56.101 22             # ¿puerto 22 abierto?</pre></div>
+          <p><b>Ejercicio mental:</b> si <span class="kbd">ping</span> falla pero <span class="kbd">nc</span> conecta al 80, ¿el host está caído o solo bloquea ICMP? Respuesta: probablemente bloquea ICMP; el servicio web sí vive. Por eso no confiamos en un solo método.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f1l3">
+          <div class="lesson-top"><h4>1.3 Mentalidad Red Team y metodología</h4><span class="tag">Concepto</span></div>
+          <p>Red Team no es “correr exploits”. Es emular a un adversario real con objetivo: llegar a un activo, probar impacto y dejar evidencia para que el Blue Team mejore.</p>
+          <table class="table"><tr><th>Etapa</th><th>Pregunta</th><th>Entregable</th></tr>
+          <tr><td>Recon</td><td>¿Qué existe?</td><td>Inventario de hosts/servicios</td></tr>
+          <tr><td>Acceso inicial</td><td>¿Cómo entro?</td><td>Vector y evidencia</td></tr>
+          <tr><td>Movimiento</td><td>¿Qué más alcanzo?</td><td>Ruta de pivoting</td></tr>
+          <tr><td>Impacto</td><td>¿Qué se prueba?</td><td>Objetivo alcanzado (simulado)</td></tr></table>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f1l4">
+          <div class="lesson-top"><h4>1.4 Terminal avanzada: lo que usarás todos los días</h4><span class="tag green">Hands-on</span></div>
+          <p>Estos patrones aparecen en enumeración, post-explotación y análisis de logs. Practícalos hasta que salgan sin pensar.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Wireshark mental en terminal: ver quién habla con quién
+ss -tupn | grep ESTAB
+watch -n 2 'ss -tupn | head -30'
+
+# Buscar credenciales olvidadas en tu VM de práctica (patrón típico)
+grep -RniE "pass|pwd|token|secret|api[_-]?key" /var/www/html 2>/dev/null | head -40
+
+# Comprimir evidencia como profesional
+mkdir -p ~/evidencia/$(date +%F)
+find . -type f -name "*.log" -exec cp {} ~/evidencia/$(date +%F)/ \;
+tar czf evidencia-$(date +%F).tgz ~/evidencia/$(date +%F)
+
+# Historial útil: qué ejecutaste y cuándo
+export HISTTIMEFORMAT="%F %T "
+history | tail -50</pre></div>
+          <div class="callout"><b>Ejemplo de clase:</b> en DVWA low, tras explotar file upload, los alumnos suelen perderse buscando la shell. Con <span class="kbd">grep -R "upload" /var/log/apache2/</span> y <span class="kbd">find /var/www -type f -mmin -10</span> la encuentras en segundos. Esa es la diferencia entre “saber el exploit” y saber operar.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f1l5">
+          <div class="lesson-top"><h4>1.5 Redes aplicadas a seguros: segmentación y confianza cero</h4><span class="tag">CISO</span></div>
+          <p>En una aseguradora, la pregunta no es solo “¿hay un puerto abierto?” sino “¿qué puede alcanzar ese puerto?”. Una impresora en la misma VLAN que el servidor de pólizas es una ruta de ataque.</p>
+          <table class="table"><tr><th>Zona</th><th>Ejemplos</th><th>Pregunta Red Team</th></tr>
+          <tr><td>Usuarios</td><td>PCs, laptops, Wi-Fi</td><td>¿Puedo llegar a servidores desde aquí?</td></tr>
+          <tr><td>Servidores</td><td>AD, correo, core de pólizas</td><td>¿Qué confía en qué?</td></tr>
+          <tr><td>DMZ</td><td>Portal web, VPN</td><td>¿La DMZ habla hacia adentro?</td></tr>
+          <tr><td>Backups</td><td>Veeam, NAS</td><td>¿Están aislados del ransomware?</td></tr></table>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 2 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">2</div><div><h3>Fase 2 — Reconocimiento, escaneo y enumeración</h3><p>Donde se gana o se pierde un pentest. Nmap a fondo y enumeración por servicio.</p></div></div>
+
+        <div class="lesson" data-lesson="f2l1">
+          <div class="lesson-top"><h4>2.1 Nmap como profesional (no como receta)</h4><span class="tag red">Core skill</span></div>
+          <p>Aprende qué hace cada flag antes de ejecutarlo. Esa es la diferencia entre operar y adivinar.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Descubrimiento de hosts en tu red de lab
+nmap -sn 192.168.56.0/24
+
+# Escaneo completo y ruidoso SOLO en lab (aprendizaje)
+nmap -sS -sV -sC -p- -T4 -oA escaneo_lab 192.168.56.101
+
+# -sS SYN stealth | -sV versiones | -sC scripts seguros | -p- todos los puertos
+# -oA guarda en todos los formatos para tu reporte</pre></div>
+          <p><b>Lectura de salida:</b> busca <i>open</i>, servicio y versión. Una versión vieja (ej. Apache 2.4.49) es una pista para investigar CVE en tu lab, no una invitación fuera de él.</p>
+          <div class="callout warn"><b>Stealth vs. aprendizaje:</b> en tu lab usa escaneos claros para aprender. El sigilo (<span class="kbd">-T2</span>, fragmentación) se estudia después, cuando entiendas el ruido que generas.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l2">
+          <div class="lesson-top"><h4>2.2 Enumeración por servicio</h4><span class="tag red">Core skill</span></div>
+          <p>Cada puerto abierto es una conversación. Aprende a preguntar bien.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Web (80/443): qué tecnología, qué rutas
+whatweb http://192.168.56.101
+gobuster dir -u http://192.168.56.101 -w /usr/share/wordlists/dirb/common.txt
+
+# SMB (445): shares y usuarios (solo tu VM)
+smbclient -L //192.168.56.101 -N
+enum4linux -a 192.168.56.101
+
+# DNS: transfiere zona solo si tu lab lo permite
+dig axfr @192.168.56.10 midominio.local</pre></div>
+          <p><b>Ejemplo real de lab:</b> si Gobuster revela <span class="kbd">/admin</span> y WhatWeb dice PHP 7.2, tu hipótesis es: panel viejo → credenciales por defecto de práctica / error de configuración. Documentas y pruebas en la VM vulnerable.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l3">
+          <div class="lesson-top"><h4>2.3 OSINT y reconocimiento pasivo (concepto)</h4><span class="tag">Concepto</span></div>
+          <p>Antes de tocar un objetivo, ya hay información pública: DNS, certificados, metadatos, repositorios. En Red Team esto define el perímetro. Lo practicas con dominios de laboratorio y rangos documentados, no con terceros.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l4">
+          <div class="lesson-top"><h4>2.4 Nmap Scripting Engine (NSE) con criterio</h4><span class="tag red">Core skill</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># Scripts por categoría (solo lab)
+nmap --script=vuln -p80,443 192.168.56.102
+nmap --script=http-enum,http-headers,http-title -p80 192.168.56.102
+nmap --script=smb-enum-shares,smb-enum-users -p445 192.168.56.101
+nmap --script=dns-zone-transfer -p53 192.168.56.10
+
+# Guardar y comparar contra baseline
+nmap -sV -oX scan1.xml 192.168.56.0/24
+ndiff scan1.xml scan2.xml   # qué cambió entre escaneos</pre></div>
+          <p><b>Ejemplo profesional:</b> como CISO pedirás escaneos antes/después de parches. <span class="kbd">ndiff</span> te da en 10 segundos si el proveedor realmente cerró el puerto o solo lo dijo.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l5">
+          <div class="lesson-top"><h4>2.5 Enumeración web profunda: de Gobuster a hipótesis</h4><span class="tag red">Hands-on</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># Descubrimiento con extensiones (así se encuentran backups reales)
+gobuster dir -u http://192.168.56.102 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt,bak,zip -t 30 -o gobuster.txt
+
+# Fuerza bruta de parámetros y virtual hosts
+ffuf -u http://192.168.56.102/FUZZ -w /usr/share/wordlists/dirb/common.txt -mc 200,301,403
+ffuf -u http://192.168.56.102/ -H "Host: FUZZ.lab.local" -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+
+# Nikto como segunda opinión (ruidoso, solo lab)
+nikto -h http://192.168.56.102 -output nikto.html -Format html</pre></div>
+          <div class="callout warn"><b>Caso típico de lab que verás en empresa:</b> Gobuster encuentra <span class="kbd">/backup.zip</span> → dentro hay código fuente → en el código hay una cadena de conexión. No es “magia”, es enumeración metódica. Anota esa cadena en tu diario: es exactamente la evidencia que un auditor va a pedir.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f2l6">
+          <div class="lesson-top"><h4>2.6 Servicios que más se rompen en empresas (y cómo mirarlos)</h4><span class="tag">CISO</span></div>
+          <table class="table"><tr><th>Servicio</th><th>Qué buscar en lab</th><th>Riesgo de negocio</th></tr>
+          <tr><td>SMB 445</td><td>Shares sin auth, usuarios enumerables</td><td>Acceso a carpetas de reclamaciones</td></tr>
+          <tr><td>RDP 3389</td><td>Expuesto sin MFA/VPN</td><td>Entrada directa a servidores</td></tr>
+          <tr><td>SQL 1433/3306</td><td>Versión, auth débil en práctica</td><td>Datos de asegurados</td></tr>
+          <tr><td>SNMP 161/udp</td><td>community “public”</td><td>Mapa completo de red</td></tr>
+          <tr><td>FTP 21</td><td>Anonymous login</td><td>Subida de archivos maliciosos</td></tr></table>
+          <div class="code"><button class="copy">Copiar</button><pre># Chequeos rápidos en tu lab
+nmap -sU -p161 --script=snmp-info 192.168.56.101
+ftp 192.168.56.101   # prueba anonymous / anonymous@ en la VM
+nmap -p1433,3306 --script=ms-sql-info,mysql-info 192.168.56.101</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 3 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">3</div><div><h3>Fase 3 — Explotación en laboratorio</h3><p>Vulnerabilidades web, Metasploit y DVWA. Todo contra VMs intencionalmente vulnerables.</p></div></div>
+
+        <div class="lesson" data-lesson="f3l1">
+          <div class="lesson-top"><h4>3.1 Vulnerabilidades web con DVWA</h4><span class="tag red">Lab</span></div>
+          <p>DVWA es tu gimnasio. Empieza en nivel <i>low</i>, entiende el código, luego sube dificultad.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Flujo en DVWA (tu contenedor/VM)
+1) SQL Injection: entiende cómo la consulta concatena tu input
+2) XSS: observa dónde se refleja tu texto en la página
+3) Command Injection: mira por qué un ";" cambia el sentido del comando
+4) File Upload: qué valida (y qué no) el servidor</pre></div>
+          <p><b>Regla de aprendizaje:</b> por cada vuln, escribe: causa raíz, impacto y mitigación. Eso te forma como Red Team que ayuda a corregir, no solo a romper.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l2">
+          <div class="lesson-top"><h4>3.2 Metasploit Framework (en tu lab)</h4><span class="tag red">Lab</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre>msfconsole
+search type:exploit name:eternalblue   # ejemplo histórico para estudiar
+use exploit/windows/smb/ms17_010_eternalblue
+show options
+set RHOSTS 192.168.56.101              # SOLO tu VM vulnerable
+check
+# En clase practicamos con Metasploitable y VMs de tu lab, paso a paso</pre></div>
+          <p><b>Importante:</b> Metasploit es un marco de trabajo, no un botón mágico. Aprenderás a leer el módulo, entender el target y validar antes de ejecutar.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l3">
+          <div class="lesson-top"><h4>3.3 Contraseñas y autenticación (lab)</h4><span class="tag">Concepto</span></div>
+          <p>Hash vs. cifrado, sal (salt), y por qué reutilizar contraseñas derrumba empresas. Prácticas solo con hashes generados en tu lab y wordlists de estudio.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Crear un hash de práctica y entender su formato
+echo -n "redteam123" | md5sum
+echo -n "redteam123" | sha256sum
+# Luego comparas: ¿qué cambia con salt? ¿por qué bcrypt es distinto?</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l4">
+          <div class="lesson-top"><h4>3.4 DVWA guiado completo (las vulnerabilidades, una por una)</h4><span class="tag red">Lab guiado</span></div>
+          <table class="table"><tr><th>Vuln</th><th>Causa raíz</th><th>Qué documentas</th><th>Mitigación</th></tr>
+          <tr><td>SQLi</td><td>Concatenar input en SQL</td><td>Payload, error, datos extraídos de la BD de práctica</td><td>Consultas parametrizadas</td></tr>
+          <tr><td>XSS Reflejado</td><td>Input sin sanitizar en HTML</td><td>Dónde se refleja, contexto</td><td>Encoding + CSP</td></tr>
+          <tr><td>XSS Almacenado</td><td>Guardar y servir sin sanitizar</td><td>Persistencia en comentarios</td><td>Sanitizar al guardar y al mostrar</td></tr>
+          <tr><td>Command Injection</td><td>Input a shell del SO</td><td>Separadores ; &amp;&amp; | que funcionan</td><td>No usar shell, lista blanca</td></tr>
+          <tr><td>File Upload</td><td>Validar solo extensión</td><td>Tipo real vs extensión</td><td>Validar MIME, renombrar, carpeta sin ejecución</td></tr>
+          <tr><td>CSRF</td><td>Sin token anti-CSRF</td><td>Petición forjada en lab</td><td>Token + SameSite</td></tr>
+          <tr><td>File Inclusion</td><td>include con input</td><td>LFI a /etc/passwd de la VM</td><td>Lista blanca de archivos</td></tr>
+          <tr><td>Brute Force</td><td>Sin rate limit</td><td>Intentos/minuto logrados</td><td>Lockout + MFA</td></tr>
+          <tr><td>SQLi Blind</td><td>Sin errores visibles, inferencia</td><td>Respuestas true/false por tiempo/contenido</td><td>Consultas parametrizadas</td></tr>
+          <tr><td>Insecure CAPTCHA</td><td>Validación evadible</td><td>Pasos omitidos en el flujo</td><td>Validar en servidor</td></tr></table>
+          <div class="callout"><b>Tu tarea CISO:</b> por cada vuln, escribe el párrafo que le dirías al desarrollador: “esto permite X, impacta Y, se corrige con Z”. Ese párrafo vale más que el payload.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l5">
+          <div class="lesson-top"><h4>3.5 Burp Suite: el proxy que todo pentester usa</h4><span class="tag red">Hands-on</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># Flujo Burp en tu DVWA
+1) Proxy > Intercept ON → navega DVWA → ves la petición cruda
+2) Repeater: reenvía la misma petición cambiando UN parámetro
+3) Intruder: automatiza fuerza bruta SOLO contra tu DVWA (rate bajo)
+4) Decoder: base64/URL encode para entender tokens
+
+# Ejemplo que debes dominar
+# Petición original: GET /dvwa/vulnerabilities/sqli/?id=1&Submit=Submit
+# En Repeater pruebas id=1' y observas el error SQL → hipótesis confirmada</pre></div>
+          <p><b>Por qué como CISO debes conocerlo:</b> el 80% de los reportes web que recibirás vienen de Burp. Si no sabes leer una petición/respuesta en Burp, no puedes retar al proveedor.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f3l6">
+          <div class="lesson-top"><h4>3.6 Hashcat y John en laboratorio (entender, no memorizar)</h4><span class="tag">Lab</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># Hashes de práctica generados por ti
+echo -n "Asegurado2024" | md5sum | awk '{print $1}' > hash_lab.txt
+cat hash_lab.txt
+
+# John con wordlist de práctica
+john --wordlist=/usr/share/wordlists/rockyou.txt --format=Raw-MD5 hash_lab.txt
+john --show --format=Raw-MD5 hash_lab.txt
+
+# Lección: MD5 cae en segundos; bcrypt/Argon2 cuesta órdenes más.
+# Esa es la conversación que tendrás con desarrollo e infraestructura.</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 4 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">4</div><div><h3>Fase 4 — Post-explotación y pivoting</h3><p>Ya entraste. Ahora: estabilizar, enumerar por dentro y moverte con intención.</p></div></div>
+
+        <div class="lesson" data-lesson="f4l1">
+          <div class="lesson-top"><h4>4.1 Enumeración interna y escalada de privilegios (concepto)</h4><span class="tag">Concepto</span></div>
+          <p>Al caer en una máquina del lab, preguntas: ¿quién soy? ¿qué puedo ejecutar? ¿qué hay en red desde aquí? En Linux miras permisos SUID, cron, sudo; en Windows, servicios y configuraciones. Siempre con checklists y notas.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Checklist Linux (tu VM comprometida de práctica)
+whoami; id; hostname; ip a
+sudo -l
+find / -perm -4000 2>/dev/null | head -20
+cat /etc/crontab; ls -la /etc/cron*</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f4l2">
+          <div class="lesson-top"><h4>4.2 Pivoting y túneles (lab)</h4><span class="tag">Concepto</span></div>
+          <p>Pivoting es usar una máquina comprometida como puente hacia otra red que no alcanzabas. En tu lab lo practicas entre dos VMs con redes distintas (ej. Host-Only + NAT) y documentas cada salto.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f4l3">
+          <div class="lesson-top"><h4>4.3 Escalada de privilegios Windows (checklist de lab)</h4><span class="tag red">Hands-on</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre>:: En tu VM Windows de práctica (usuario bajo)
+whoami /all
+net user
+net localgroup administrators
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+wmic qfe list brief
+
+:: Servicios mal configurados (buscar en lab)
+sc query
+accesschk.exe -uwcqv "Users" *
+:: Carpetas con permisos débiles y credenciales en archivos
+findstr /si password *.txt *.ini *.config 2>nul
+reg query HKLM /f password /t REG_SZ /s 2>nul</pre></div>
+          <p><b>Ejemplo GOAD:</b> un servicio con path sin comillas (<i>unquoted service path</i>) en una VM de práctica es la ruta clásica a SYSTEM. Lo practicas, lo fotografías y luego lo corriges. Esa es la evidencia que cierra el hallazgo.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f4l4">
+          <div class="lesson-top"><h4>4.4 Túneles que debes dominar (SSH, Chisel, Ligolo en lab)</h4><span class="tag red">Hands-on</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># Port forwarding local con SSH (entre tus VMs)
+ssh -L 8080:192.168.56.102:80 kali@192.168.56.5
+# Ahora http://127.0.0.1:8080 es la web interna de la segunda red
+
+# SOCKS proxy para pivotar escaneos
+ssh -D 9050 kali@192.168.56.5
+proxychains nmap -sT -Pn 10.10.10.0/24
+
+# Regla: documenta cada túnel (origen, destino, puerto, hora).
+# En un reporte real, el túnel ES la ruta de ataque.</pre></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f4l5">
+          <div class="lesson-top"><h4>4.5 Robo de credenciales y Pass-the-Hash: concepto defensivo</h4><span class="tag">Concepto</span></div>
+          <p>En Windows, quien controla la memoria de LSASS controla las credenciales en tránsito. Por eso Credential Guard, LSA Protection y “no usar Domain Admin para navegar” son controles que como CISO vas a exigir. En GOAD verás la cadena completa: usuario bajo → hash reutilizable → movimiento lateral → DA.</p>
+          <div class="callout red"><b>Línea de aprendizaje:</b> estudias la técnica para detectarla (Sysmon, EDR, eventos 4624/4625/4672), no para usarla fuera del lab. Tu entregable es la regla de detección, no el hash.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 5 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">5</div><div><h3>Fase 5 — Active Directory (el plato fuerte empresarial)</h3><p>GOAD, BloodHound, Kerberoasting y AS-REP Roasting — en un dominio que tú montas.</p></div></div>
+
+        <div class="lesson" data-lesson="f5l1">
+          <div class="lesson-top"><h4>5.1 Cómo piensa AD: dominio, Kerberos, LDAP, SMB</h4><span class="tag red">AD</span></div>
+          <p>AD centraliza identidad. Kerberos reparte tickets; si un ticket se puede pedir y es débil, se puede atacar <i>offline</i> en el lab. BloodHound dibuja relaciones: quién puede llegar a Domain Admin sin “hackear” nada raro, solo abusando permisos.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f5l2">
+          <div class="lesson-top"><h4>5.2 GOAD: tu laboratorio de AD</h4><span class="tag red">AD Lab</span></div>
+          <p>GOAD (Game of Active Directory) te da un dominio vulnerable listo para practicar enumeración, abuso de ACLs y movimiento lateral entre VMs. Lo montas aislado, con snapshots, y reinicias cuando quieras.</p>
+          <div class="callout"><b>Meta de esta fase:</b> partir de un usuario de dominio sin privilegios en GOAD y, siguiendo el grafo de BloodHound, llegar a Domain Admin documentando cada abuso de permiso.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f5l3">
+          <div class="lesson-top"><h4>5.3 Kerberoasting y AS-REP Roasting (concepto de lab)</h4><span class="tag">Concepto</span></div>
+          <p>Son ataques a cómo Kerberos entrega tickets cifrados con claves derivadas de contraseñas. En tu GOAD los practicas con cuentas creadas para eso, entiendes la telemetría que generan y cómo se detectan (eventos 4769/4768 anómalos).</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f5l4">
+          <div class="lesson-top"><h4>5.4 BloodHound en GOAD: leer el grafo como un CISO</h4><span class="tag red">AD Lab</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># Recolección en tu dominio de práctica (SharpHound / BloodHound.py)
+bloodhound-python -d lab.local -u usuario -p 'PassLab!' -ns 192.168.56.10 -c All
+
+# Consultas que debes dominar en la UI
+# 1) "Find Principals with DCSync Rights"
+# 2) "Shortest Paths to Domain Admins"
+# 3) "Find Computers with Unsupported Operating Systems"
+# 4) "List Controllers with Outbound Control"</pre></div>
+          <p><b>Ejercicio:</b> exporta la ruta más corta a Domain Admin en GOAD y escribe, en español simple, qué permiso abusado permite cada salto. Ese texto es exactamente el que va al reporte ejecutivo.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f5l5">
+          <div class="lesson-top"><h4>5.5 Abusos de ACL, delegación y certificados (AD CS)</h4><span class="tag">Avanzado</span></div>
+          <table class="table"><tr><th>Técnica (lab)</th><th>Qué se abusa</th><th>Detección</th></tr>
+          <tr><td>GenericAll / WriteDacl</td><td>ACL débil en objeto AD</td><td>Auditoría de cambios de ACL</td></tr>
+          <tr><td>Kerberos Delegation</td><td>Delegación sin restricción</td><td>Eventos 4769 con delegación</td></tr>
+          <tr><td>AD CS ESC1</td><td>Plantilla de certificado mal configurada</td><td>Logs de CA, solicitudes anómalas</td></tr>
+          <tr><td>DCSync</td><td>Derecho de replicación</td><td>Evento 4662 de replicación</td></tr></table>
+          <p class="small muted">En GOAD practicas la cadena y, en paralelo, escribes la consulta de detección. Red y Blue en la misma sesión: ese es el nivel CISO.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <!-- FASE 6 -->
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">6</div><div><h3>Fase 6 — Evasión, C2 y operación completa</h3><p>Cuando ya dominas lo anterior: persistencia en lab, C2 y reporte profesional.</p></div></div>
+
+        <div class="lesson" data-lesson="f6l1">
+          <div class="lesson-top"><h4>6.1 Command & Control (C2) en laboratorio</h4><span class="tag">Avanzado</span></div>
+          <p>Un C2 es el canal por el que un operador controla agentes en máquinas del lab. Estudiarás arquitectura, beaconing y detección. Todo entre tus VMs, con logs abiertos para aprender a defender.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f6l2">
+          <div class="lesson-top"><h4>6.2 Evasión y OPSEC (conceptos)</h4><span class="tag">Avanzado</span></div>
+          <p>No es “ser invisible”, es entender qué ruido dejas: procesos, red, disco, memoria. En el lab comparas una acción ruidosa vs. una cuidadosa y miras qué ve el defensor.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f6l3">
+          <div class="lesson-top"><h4>6.3 Reporte Red Team que sí sirve</h4><span class="tag green">Profesional</span></div>
+          <p>Un buen reporte cuenta una historia: objetivo, ruta, evidencia, impacto y recomendaciones priorizadas. Sin eso, el ejercicio no cambia nada en la empresa.</p>
+          <table class="table"><tr><th>Sección</th><th>Qué lleva</th></tr><tr><td>Resumen</td><td>Objetivo y si se alcanzó</td></tr><tr><td>Ruta de ataque</td><td>Paso a paso con tiempos</td></tr><tr><td>Evidencia</td><td>Capturas, logs, hashes</td></tr><tr><td>Recomendaciones</td><td>Arreglos por impacto/esfuerzo</td></tr></table>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f6l4">
+          <div class="lesson-top"><h4>6.4 Purple Team: convertir el ataque en detección</h4><span class="tag green">CISO</span></div>
+          <p>Tras cada técnica en el lab, te sientas (contigo mismo, al inicio) del lado defensor: ¿qué log generó? ¿lo vería nuestro SIEM? ¿en cuánto tiempo? Esa tabla técnica→telemetría→alerta es el entregable más valioso para una aseguradora regulada.</p>
+          <table class="table"><tr><th>Técnica (MITRE)</th><th>Telemetría</th><th>Alerta esperada</th></tr>
+          <tr><td>T1558.003 Kerberoasting</td><td>4769 RC4, muchos SPN</td><td>SIEM: &gt;10 TGS en 5 min por usuario</td></tr>
+          <tr><td>T1003 LSASS</td><td>Sysmon 10, acceso a lsass.exe</td><td>EDR bloquea + alerta severa</td></tr>
+          <tr><td>T1021 SMB lateral</td><td>4624 tipo 3, 5140 shares</td><td>Correlación host→host inusual</td></tr></table>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="f6l5">
+          <div class="lesson-top"><h4>6.5 Evasión responsable y OPSEC para ejercicios autorizados</h4><span class="tag">Avanzado</span></div>
+          <p>En un ejercicio real autorizado, la evasión se acuerda en el ROE: qué se puede intentar, qué está fuera de alcance (ej. apagar el EDR en producción) y cómo se coordina con el SOC para no confundir con un incidente real. Sin ROE que lo cubra, no se prueba evasión en producción.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- CISSP -->
+    <section class="card section hidden" id="cissp">
+      <h2>CISSP: los 8 dominios, estudiados como CISO</h2>
+      <p class="muted">El CISSP (ISC2) no es un examen de comandos: es un examen de criterio. Certifica que puedes gobernar un programa de seguridad completo. Tú ya vives gran parte de esto como CISO; esta ruta convierte tu experiencia en respuestas correctas el día del examen.</p>
+      <div class="callout"><b>Material de lectura incluido:</b> más abajo, en esta misma sección, tienes la <b>lectura completa por dominio</b> — el texto para leer y estudiar, escrito como apuntes de clase: explicación, conceptos que no pueden faltar, ejemplo resuelto, trampa típica de examen y preguntas de comprobación. No necesitas tener un libro para empezar a leer: aquí está el material; el libro oficial sería un refuerzo, no un requisito para arrancar.</div>
+      <div class="route-steps">
+        <div class="rstep"><div class="n">1</div><div><b>Lee el dominio</b><p class="muted small">En la lectura completa de abajo, lee sin prisa y subraya lo que no podrías explicar en voz alta.</p></div></div>
+        <div class="rstep"><div class="n">2</div><div><b>Haz la comprobación</b><p class="muted small">Al final de cada dominio hay preguntas con respuesta explicada. Si fallas, re-lee solo ese bloque.</p></div></div>
+        <div class="rstep"><div class="n">3</div><div><b>Marca el dominio</b><p class="muted small">Cuando puedas explicarlo sin mirar, marca la lección del dominio como completada y pasa al siguiente. El orden recomendado es del Dominio 1 al 8.</p></div></div>
+      </div>
+
+      <h3>El examen, sin humo</h3>
+      <table class="table">
+        <tr><th>Dato</th><th>Detalle</th></tr>
+        <tr><td>Formato</td><td>CAT adaptativo en computadora: entre 100 y 150 preguntas, hasta 3 horas. No puedes volver atrás.</td></tr>
+        <tr><td>Para aprobar</td><td>700 de 1000 puntos (escala ponderada, no es un 70% simple)</td></tr>
+        <tr><td>Experiencia requerida</td><td>5 años pagados en 2 o más dominios. Un grado universitario de 4 años o una certificación aprobada de la lista de ISC2 descuenta 1 año. Sin la experiencia, puedes aprobar y quedar como Associate of ISC2 mientras la completas.</td></tr>
+        <tr><td>Después</td><td>Endoso de otro CISSP, 120 CPE en ciclos de 3 años y cuota anual de mantenimiento.</td></tr>
+        <tr><td>Pregunta por dominio</td><td>D1 16% · D3 13% · D4 13% · D5 13% · D7 13% · D6 12% · D2 10% · D8 10% (pesos oficiales aproximados)</td></tr>
+      </table>
+
+      <div class="callout warn"><b>La regla que más puntos salva: piensa como gerente, no como técnico.</b> Si una opción dice “instala el firewall” y otra “evalúa el riesgo y define la política”, la segunda suele ser la respuesta CISSP. El examen pregunta qué debe hacerse primero, qué protege el negocio y quién es responsable. La respuesta técnica es el paso 2; la de gestión es el paso 1.</div>
+
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">C</div><div><h3>Los 8 dominios, uno por uno</h3><p>Marca cada dominio como completado cuando puedas explicarlo en voz alta sin mirar. Ese es el estándar de examen.</p></div></div>
+
+        <div class="lesson" data-lesson="c1l1">
+          <div class="lesson-top"><h4>Dominio 1 — Seguridad y gestión de riesgos (16%)</h4><span class="tag green">El más pesado</span></div>
+          <p><b>Conceptos clave:</b> tríada CIA (+ autenticidad y no repudio), gobernanza y alineación con el negocio, jerarquía documental (política → estándar → línea base → procedimiento → guía), gestión de riesgos cualitativa (matriz) vs. cuantitativa, respuestas al riesgo (evitar, mitigar, transferir, aceptar — lo firma la dirección, no seguridad sola), BIA con MTD, RTO, RPO y WRT, planes BCP/DRP/COOP, marco legal (penal, civil, administrativo; propiedad intelectual; privacidad), código de ética de ISC2, <i>due care</i> vs. <i>due diligence</i>.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># El cálculo que el examen ama (anótalo en tu diario)
+SLE = AV × EF        (valor del activo × factor de exposición)
+ALE = SLE × ARO      (pérdida por evento × veces por año)
+
+Ejemplo: servidor core de pólizas AV = $1,000,000, EF = 30%, ARO = 0.2
+SLE = $300,000   ALE = $60,000/año
+Un control de $35,000/año que baja el ARO a 0.05 → ALE nuevo $15,000
+Ahorro $45,000 &gt; costo $35,000 → el control SE JUSTIFICA.</pre></div>
+          <div class="callout"><b>Trampa clásica:</b> si el control cuesta más que lo que ahorra en ALE, la respuesta correcta suele ser aceptar el riesgo o transferirlo (seguro), no comprarlo. El examen castiga gastar sin justificar.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l2">
+          <div class="lesson-top"><h4>Dominio 2 — Seguridad de activos (10%)</h4><span class="tag">Gobierno del dato</span></div>
+          <p><b>Conceptos clave:</b> clasificación de datos (comercial: confidencial / propietario / interno / público; gobierno: top secret → sin clasificar), roles del dato — el <b>dueño</b> clasifica y autoriza acceso, el <b>custodio</b> implementa los controles (suele ser IT), el <b>steward</b> vela por la calidad —, ciclo de vida completo (crear, almacenar, usar, compartir, archivar, destruir), retención y disposición, sanitización de medios NIST SP 800-88 (<b>Clear, Purge, Destroy</b>), privacidad desde el diseño y minimización, DRM, DLP y CASB.</p>
+          <div class="callout warn"><b>Trampa clásica:</b> “¿Quién decide la clasificación de un dato?” — el dueño del dato (el negocio), nunca el custodio ni el administrador del sistema. En una aseguradora: el área dueña de las reclamaciones clasifica; tu equipo protege.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l3">
+          <div class="lesson-top"><h4>Dominio 3 — Arquitectura e ingeniería de seguridad (13%)</h4><span class="tag">Modelos y cripto</span></div>
+          <p><b>Conceptos clave:</b> modelos de seguridad — <b>Bell-LaPadula</b> (confidencialidad: ni leer hacia arriba ni escribir hacia abajo), <b>Biba</b> (integridad: lo inverso), <b>Clark-Wilson</b> (integridad comercial con transacciones bien formadas), <b>Brewer-Nash / Muralla China</b> (conflicto de interés) —, TCB y anillos de protección, criptografía simétrica (AES) vs. asimétrica (RSA, Diffie-Hellman), hash (SHA-256), firmas digitales, PKI y certificados, TLS, gestión de llaves, TPM y arranque seguro, y seguridad física: CPTED, clases de fuego y agentes extintores, control de acceso físico.</p>
+          <div class="callout"><b>Trampa clásica:</b> confundir Bell-LaPadula con Biba. Frase para no fallar: “LaPadula protege secretos (confidencialidad); Biba protege la verdad (integridad)”.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l4">
+          <div class="lesson-top"><h4>Dominio 4 — Seguridad de redes y comunicaciones (13%)</h4><span class="tag green">Tu refuerzo cruzado</span></div>
+          <p><b>Conceptos clave:</b> modelos OSI y TCP/IP, IPsec (AH vs. ESP; modo túnel vs. transporte), TLS 1.2/1.3 y SSH, tipos de firewall (filtrado de paquetes, stateful, proxy, NGFW, WAF), segmentación y microsegmentación, NAC con 802.1X, Wi-Fi WPA2/WPA3 y EAP, VPN sitio a sitio y de acceso remoto, defensa contra DDoS, seguridad de voz y multimedia.</p>
+          <div class="callout"><b>Este dominio se estudia dos veces sin darte cuenta:</b> es el corazón de tus Fases 1–2 de pentest y del Dominio 5 del CISA. Cuando domines segmentación, VLAN y control de acceso a la red en la práctica, la mitad del Dominio 4 ya es tuya.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="ruta">Ver Fases 1–2 de pentest</button><button class="btn small" data-jump="cisa">Ver cómo lo audita el CISA (D5)</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l5">
+          <div class="lesson-top"><h4>Dominio 5 — Identidad y gestión de acceso, IAM (13%)</h4><span class="tag">Identidad</span></div>
+          <p><b>Conceptos clave:</b> identificación, autenticación, autorización y rendición de cuentas; factores (algo que sabes, tienes, eres, y dónde estás); biometría — FAR, FRR y CER (menor CER, mejor sistema) —; Kerberos (AS, TGS y tickets); SSO y federación: SAML (aserciones, IdP y SP), OAuth 2.0 (autorización delegada) y OpenID Connect (identidad sobre OAuth); modelos de control de acceso MAC, DAC, RBAC y ABAC; ciclo de vida de la identidad (alta, cambio de rol, baja — <i>joiner-mover-leaver</i>); revisiones y recertificación de accesos; PAM y bóvedas de credenciales privilegiadas.</p>
+          <div class="callout warn"><b>Trampa clásica:</b> OAuth por sí solo NO autentica: autoriza. La identidad llega con OpenID Connect. Y en el examen, “quién eres” (identificación) siempre va antes de “pruébalo” (autenticación).</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l6">
+          <div class="lesson-top"><h4>Dominio 6 — Evaluación y pruebas de seguridad (12%)</h4><span class="tag green">Tu terreno</span></div>
+          <p><b>Conceptos clave:</b> diferencia entre escaneo de vulnerabilidades (mejor con credenciales) y pentest; pruebas por nivel de conocimiento (sin conocimiento, parcial, total — “caja negra/gris/blanca”); equipos Red, Blue y Purple; auditorías internas y externas; informes <b>SOC 1, SOC 2 y SOC 3</b> — Tipo I evalúa el diseño en un momento, Tipo II la efectividad operativa durante un período —; revisión de logs y cuentas; indicadores KPI/KRI; pruebas de ingeniería social autorizadas.</p>
+          <div class="callout"><b>Este dominio ya lo practicas:</b> es el mismo músculo de los módulos de Pentest empresa, ROE y Escenarios de este centro. Repásalos y traduce cada actividad a “qué pregunta de examen responde esto”.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="empresa">Ir a Pentest empresa</button><button class="btn small" data-jump="roe">Ver ROE y alcance</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l7">
+          <div class="lesson-top"><h4>Dominio 7 — Operaciones de seguridad (13%)</h4><span class="tag">El día a día</span></div>
+          <p><b>Conceptos clave:</b> respuesta a incidentes (preparación → detección y análisis → contención, erradicación y recuperación → lecciones aprendidas); forense digital: <b>orden de volatilidad</b> (registros y caché, RAM, red, disco), cadena de custodia, imagen bit a bit con bloqueador de escritura; regla de respaldos 3-2-1; RAID 0/1/5/6/10 y alta disponibilidad; gestión de parches y de cambios; registro centralizado, SIEM y SOAR; separación de funciones, privilegio mínimo operativo y rotación de personal.</p>
+          <div class="callout warn"><b>Trampa clásica:</b> ante un equipo comprometido con evidencia, lo primero NO es apagarlo: es preservar la evidencia volátil. El examen premia contener sin destruir la prueba.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l8">
+          <div class="lesson-top"><h4>Dominio 8 — Seguridad en el desarrollo de software (10%)</h4><span class="tag">DevSecOps</span></div>
+          <p><b>Conceptos clave:</b> SDLC seguro en cada fase, modelos cascada, ágil y DevSecOps; OWASP Top 10 como lenguaje común con desarrollo (lo practicas en DVWA); validación de entrada y consultas parametrizadas contra inyección; firma de código y cadena de suministro; seguridad de APIs (autenticación, autorización por objeto, límites de velocidad); seguridad de bases de datos (vistas, cifrado, inferencia y agregación); tipos de malware; modelos de madurez como OWASP SAMM.</p>
+          <div class="callout"><b>Conexión directa:</b> cada vulnerabilidad de tu tabla DVWA (Fase 3.4) es una respuesta del Dominio 8 esperando su pregunta. Estudia causa raíz y mitigación, no el payload.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="ruta">Ir a la Fase 3 (DVWA)</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <h3>Material de lectura completo — lee y estudia aquí mismo</h3>
+      <p class="muted">Esto es el texto de estudio, dominio por dominio, en el orden recomendado (del 1 al 8). Lee cada dominio completo, haz las preguntas de comprobación al final de cada uno y, cuando puedas explicarlo sin mirar, sube y marca la lección del dominio como completada. Contenido de estudio original, escrito como apuntes de clase: no es el libro oficial de ISC2, es tu material de lectura para preparar el examen.</p>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">1</div><div><h4>Lectura · Dominio 1 — Seguridad y gestión de riesgos (16% del examen)</h4><p>El dominio más pesado y el más gerencial. Si dominas este lenguaje, la mitad del examen se te hace familiar.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>La seguridad de la información no existe para “proteger computadoras”: existe para proteger los objetivos del negocio. Todo este dominio baja de una sola pregunta: <b>¿qué riesgo corre el negocio, cuánto vale y quién decide qué hacer con él?</b> Cuando una pregunta del examen te ponga a elegir entre una acción técnica y una de gestión, casi siempre gana la de gestión: primero se evalúa el riesgo, se define la política y la dirección acepta o financia; la herramienta viene después.</p>
+          <h5>Lo que protege: mucho más que la tríada</h5>
+          <p>La tríada clásica es <b>CIA</b>: <b>Confidencialidad</b> (solo quien debe, ve), <b>Integridad</b> (la información no se altera sin control ni detección) y <b>Disponibilidad</b> (cuando el negocio la necesita, está). El CISSP suma dos propiedades: <b>autenticidad</b> (lo que recibes es genuino y de quien dice ser) y <b>no repudio</b> (nadie puede negar haber hecho la acción). Un error común es tratar la confidencialidad como “lo importante”: en un hospital o en tu core de pólizas, la integridad y la disponibilidad pueden pesar más que el secreto.</p>
+          <h5>Gobernanza: quién manda y con qué documentos</h5>
+          <p>La <b>alta dirección gobierna</b>: aprueba el apetito de riesgo, la política y el presupuesto. Seguridad asesora, implementa controles y mide; no decide sola aceptar riesgos del negocio. Los documentos siguen una jerarquía que el examen adora preguntar, de arriba hacia abajo: <b>política</b> (qué quiere la dirección, obligatoria y a alto nivel) → <b>estándar</b> (requisitos uniformes obligatorios, ej. “AES-256”) → <b>línea base</b> (mínimo aceptable de configuración) → <b>procedimiento</b> (paso a paso obligatorio) → <b>guía</b> (recomendación, no obligatoria). Si una opción dice “seguir la guía” frente a “cumplir el estándar”, lo obligatorio manda.</p>
+          <h5>Riesgo: el idioma del examen</h5>
+          <p>Riesgo = amenaza × vulnerabilidad × impacto sobre un activo. El análisis puede ser <b>cualitativo</b> (escalas alto/medio/bajo y matrices; rápido, subjetivo, sirve para priorizar) o <b>cuantitativo</b> (dinero y probabilidades; más lento, más “objetivo”, sirve para justificar presupuesto). El CISSP espera que sepas moverte entre ambos y, sobre todo, calcular:</p>
+          <div class="code"><button class="copy">Copiar</button><pre>SLE = AV × EF        (pérdida de un solo evento)
+ALE = SLE × ARO      (pérdida esperada al año)
+
+Ejemplo resuelto (core de pólizas):
+AV = $2,000,000 · EF = 25% · ARO = 0.1
+SLE = $500,000 · ALE = $50,000/año
+Un control de $20,000/año que baja el ARO a 0.02:
+nuevo ALE = $10,000 → ahorras $40,000 por $20,000 → se justifica.
+Si el control costara $60,000, la respuesta CISSP sería NO comprarlo
+con esos números: se busca otro control, se transfiere o se acepta.</pre></div>
+          <p>Frente a un riesgo hay cuatro respuestas, y el examen verifica que sabes quién firma cada una: <b>evitar</b> (dejar la actividad), <b>mitigar</b> (controles que bajan probabilidad o impacto), <b>transferir</b> (seguro o contrato: trasladas el impacto económico, nunca la responsabilidad) y <b>aceptar</b> (lo decide la dirección, dentro del apetito de riesgo, y queda documentado). El riesgo que queda después de los controles es el <b>riesgo residual</b>: si excede el apetito, el plan de tratamiento está incompleto.</p>
+          <h5>Continuidad: BIA antes que tecnología</h5>
+          <p>Ningún plan de continuidad se escribe antes del <b>análisis de impacto al negocio (BIA)</b>. El BIA ordena los procesos por criticidad y produce las tres cifras que luego mandan en las copias, los sitios alternos y el examen: <b>MTD</b> (tiempo máximo que el negocio tolera caído), <b>RTO</b> (en cuánto debes restaurar el servicio; siempre menor que el MTD) y <b>RPO</b> (cuántos datos puedes perder, medido hacia atrás en el tiempo), más el <b>WRT</b> (tiempo de verificar que lo restaurado funciona, antes de declarar el servicio vuelto). Los planes hijos del BIA son el <b>BCP</b> (que el negocio siga), el <b>DRP</b> (que la TI se recupere) y el <b>COOP</b> (que las funciones esenciales de la organización continúen). Memoriza la cadena: sin BIA no hay RTO, y sin RTO no se puede elegir estrategia de recuperación.</p>
+          <h5>Personas, ley y ética</h5>
+          <p>Este dominio también cubre el factor humano: verificación de antecedentes proporcional al puesto, acuerdos de confidencialidad, descripción de funciones con responsabilidades de seguridad, separación de funciones, rotación y vacaciones obligatorias (controles contra fraude interno), y sanciones claras. En lo legal distingue derecho penal, civil y administrativo, y protege la <b>propiedad intelectual</b>: marca, patente, secreto comercial y derecho de autor — para un asegurador, la metodología actuarial suele ser secreto comercial, no patente. Dos frases que el examen usa como cuchillo: <b>due care</b> es hacer lo que haría una persona prudente (implementar el control razonable) y <b>due diligence</b> es saberlo: investigar, verificar y mantenerte enterado. Negligencia es fallar el due care pudiendo ejercer due diligence. Y sobre todo el dominio flota el código de ética de ISC2, en este orden: proteger a la sociedad y la infraestructura, actuar con honor e integridad, dar un servicio diligente y competente, y hacer avanzar la profesión.</p>
+          <div class="callout warn"><b>Trampa clásica del Dominio 1:</b> la opción “instala el firewall / compra la herramienta” casi nunca es la primera respuesta. Primero: política, riesgo, aprobación y dueño. Si la pregunta pide “el primer paso”, busca evaluar el riesgo o escalar a la dirección.</div>
+          <details class="selfcheck"><summary>Comprobación D1 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> Un control cuesta $45,000/año. Baja el ALE de $80,000 a $40,000. ¿Se compra?<br><b>Respuesta:</b> No con esos números: ahorra $40,000 y cuesta $45,000. Se busca un control más barato, se combina transferir (seguro) o la dirección acepta el riesgo documentado.</p>
+          <p><b>2.</b> Al irse un empleado, su acceso queda activo una semana y nadie lo nota. ¿Falla de qué?<br><b>Respuesta:</b> Del proceso de gestión de identidad y de due diligence organizacional: la baja oportuna y la revisión periódica de accesos son controles de gobierno, no de la herramienta.</p></details>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">2</div><div><h4>Lectura · Dominio 2 — Seguridad de activos (10%)</h4><p>El dato es el activo. Este dominio decide quién lo clasifica, quién lo toca y cómo muere.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>No puedes proteger igual todo. Este dominio es el sistema para decidir <b>qué vale cada dato y qué control merece</b>, desde que nace hasta que se destruye. En examen, casi cada pregunta de este dominio se reduce a: ¿quién es responsable de qué, y según qué clasificación?</p>
+          <h5>Los roles que nunca se intercambian</h5>
+          <p>Graba esta tabla: el examen la pregunta de mil maneras.</p>
+          <table class="table"><tr><th>Rol</th><th>Qué hace</th><th>En tu aseguradora</th></tr>
+          <tr><td><b>Dueño del dato</b></td><td>Clasifica, autoriza accesos, define retención. Responde por el dato.</td><td>El área de negocio: el dueño de reclamaciones.</td></tr>
+          <tr><td><b>Custodio</b></td><td>Implementa los controles técnicos que el dueño ordena.</td><td>TI: aplica cifrado, respaldos y permisos.</td></tr>
+          <tr><td><b>Steward (guardián de calidad)</b></td><td>Cuida la calidad, definiciones y uso correcto día a día.</td><td>Analista del área dueña del dato.</td></tr>
+          <tr><td><b>Usuario</b></td><td>Usa el dato siguiendo la política. No clasifica ni autoriza.</td><td>El ajustador que consulta la reclamación.</td></tr></table>
+          <div class="callout warn"><b>Trampa clásica:</b> “¿Quién define la clasificación?” Siempre el dueño del dato (el negocio). Si la opción dice que TI o el administrador clasifica, es la respuesta equivocada aunque suene práctica.</div>
+          <h5>Clasificación y manejo</h5>
+          <p>En el mundo comercial se habla de <b>confidencial, propietario/interno y público</b>; en gobierno, de <b>top secret, secreto, confidencial y sin clasificar</b> (con “sensible pero no clasificado” como categoría práctica). Cada nivel lleva reglas de manejo: cómo se etiqueta, cómo se transmite, dónde se guarda y cómo se destruye. Clasificar de más cuesta dinero y fricción; de menos, fuga. El examen premia clasificar <b>con criterio del dueño y revisarlo cuando cambia el proceso</b>, no clasificar todo como “alto secreto”.</p>
+          <h5>El ciclo de vida del dato</h5>
+          <p>Crear/adquirir → clasificar y etiquetar → almacenar → usar → compartir → archivar → destruir. En cada etapa el control cambia: al crear manda la clasificación; al compartir manda el cifrado y el acuerdo; al archivar manda la <b>retención</b> (definida por ley, regulación y necesidad del negocio — en seguros, las regulaciones de retención de reclamaciones mandan años); al final manda la destrucción correcta.</p>
+          <h5>Destruir bien: Clear, Purge, Destroy</h5>
+          <p>La referencia es NIST SP 800-88 y el examen distingue tres niveles: <b>Clear</b> (sobreescritura lógica; protege contra recuperación simple de teclado), <b>Purge</b> (desmagnetizar, borrado criptográfico o de firmware; protege contra análisis de laboratorio razonable) y <b>Destroy</b> (destrucción física: triturar, incinerar, desintegrar). Formatear no es ninguna de las tres. La regla práctica: <b>un medio que sale de tu control con dato sensible se purga o se destruye</b>, y queda certificado. En SSD, la sobreescritura tradicional no garantiza nada por el wear-leveling: ahí manda el borrado criptográfico del fabricante o la destrucción.</p>
+          <h5>Privacidad y control del flujo</h5>
+          <p>Este dominio conecta con privacidad: minimiza lo que recoges, úsalo solo para el fin declarado, y distingue quién decide el fin (<b>responsable/controlador</b> del tratamiento) de quién lo procesa por encargo (<b>encargado/procesador</b>, ej. un proveedor en la nube). Las herramientas de control del flujo son <b>DLP</b> (detecta y bloquea salidas indebidas), <b>DRM/IRM</b> (el control viaja con el documento) y <b>CASB</b> (visibilidad y política sobre servicios en la nube). En examen: si el problema es “no sabemos qué se fue”, primero va la visibilidad/DLP en modo monitoreo; bloquear sin entender el flujo rompe el negocio.</p>
+          <details class="selfcheck"><summary>Comprobación D2 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> TI decide subir la clasificación de la base de reclamaciones “por precaución”. ¿Correcto?<br><b>Respuesta:</b> No. Clasifica el dueño del dato; TI como custodio implementa. TI puede recomendar, no decidir.</p>
+          <p><b>2.</b> Un disco con datos de asegurados se enviará a garantía fuera de la empresa. ¿Clear basta?<br><b>Respuesta:</b> No: medio que sale de tu control con dato sensible → Purge verificado o Destroy, con certificado.</p></details>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">3</div><div><h4>Lectura · Dominio 3 — Arquitectura e ingeniería de seguridad (13%)</h4><p>Modelos que piensan por ti y la criptografía que sostiene todo lo demás.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>Este dominio responde: <b>¿cómo se diseña un sistema para que sea seguro por construcción, no por parchado?</b> Trae dos mitades: los modelos formales de control de acceso (la parte teórica que más cae en examen) y la criptografía aplicada (la parte que usas cada día sin verla). No necesitas ser matemático; necesitas saber qué garantiza cada pieza y qué no.</p>
+          <h5>Los modelos, sin miedo</h5>
+          <table class="table"><tr><th>Modelo</th><th>Protege</th><th>Regla en una frase</th></tr>
+          <tr><td><b>Bell-LaPadula</b></td><td>Confidencialidad</td><td>No leer hacia arriba; no escribir hacia abajo. Un nivel bajo no lee secretos ni los “baja” escribiéndolos donde otros los vean.</td></tr>
+          <tr><td><b>Biba</b></td><td>Integridad</td><td>Lo inverso: no leer hacia abajo (datos sucios contaminan), no escribir hacia arriba (no corrompes lo íntegro).</td></tr>
+          <tr><td><b>Clark-Wilson</b></td><td>Integridad comercial</td><td>Solo programas certificados pueden tocar los datos, con transacciones bien formadas y separación de funciones. Es el modelo de la banca — y de tus pólizas.</td></tr>
+          <tr><td><b>Brewer-Nash (“Muralla China”)</b></td><td>Conflicto de interés</td><td>Si accediste a los datos de un cliente, quedas bloqueado de su competidor. Pensado para consultoras y auditoras.</td></tr></table>
+          <div class="callout"><b>Mnemotecnia:</b> “<b>La</b>Padula guarda secretos; <b>Bi</b>ba guarda la verdad.” Si la pregunta habla de filtración de clasificados, es LaPadula; si habla de datos financieros alterados, piensa en Biba o Clark-Wilson.</div>
+          <h5>La base confiable: TCB y monitor de referencia</h5>
+          <p>El <b>TCB</b> (base de computación confiable) es el conjunto de hardware, firmware y software del que depende toda la seguridad: si él falla, nada arriba está seguro. Lleva dentro el <b>monitor de referencia</b>: el mecanismo que media <b>todo</b> acceso (nada se lo salta), es a prueba de manipulación y es verificable. Los <b>anillos de protección</b> separan niveles de privilegio (el núcleo en el anillo 0, las aplicaciones arriba): cuanto más adentro, más puede y más debe estar protegido. Los modos de operación (dedicado, system-high, compartimentado y multinivel) describen quién puede trabajar con qué clasificaciones en el mismo sistema. Y cuando el examen hable de evaluaciones formales, recuerda la escala: <b>Common Criteria</b> con niveles EAL 1–7 (7 = verificado formalmente) es el estándar internacional vigente.</p>
+          <h5>Criptografía: cuatro trabajos, cuatro herramientas</h5>
+          <table class="table"><tr><th>Necesitas…</th><th>Usas…</th><th>Ejemplo</th></tr>
+          <tr><td>Confidencialidad en volumen</td><td>Cifrado <b>simétrico</b> (una llave)</td><td><b>AES</b>: rápido, cifra discos y sesiones. El problema: repartir la llave.</td></tr>
+          <tr><td>Intercambiar llaves / identidad</td><td>Cifrado <b>asimétrico</b> (par de llaves)</td><td><b>RSA</b>, <b>Diffie-Hellman</b>, curvas elípticas: lento, cifra poco; sirve para acordar la llave de AES.</td></tr>
+          <tr><td>Integridad (detectar cambios)</td><td><b>Hash</b> unidireccional</td><td><b>SHA-256</b>: huella fija; si un bit cambia, la huella cambia. No cifra nada.</td></tr>
+          <tr><td>Autenticidad + no repudio</td><td><b>Firma digital</b> = hash cifrado con la llave privada</td><td>Quien firma no puede negarlo; quien verifica usa la llave pública.</td></tr></table>
+          <p>La <b>PKI</b> amarra esto al mundo real: una autoridad certificadora (CA) firma certificados X.509 que atan una llave pública a una identidad; las listas de revocación (CRL) y OCSP avisan cuando un certificado muere antes de tiempo. TLS funciona así: el asimétrico autentica y acuerda, el simétrico carga los datos, el hash vigila la integridad. La gestión de llaves es el punto débil eterno: generación protegida (idealmente en un <b>HSM</b>), distribución segura, custodia dividida (que nadie solo pueda reconstruir una llave maestra), rotación, revocación y destrucción. El examen golpea aquí: la criptografía rara vez “se rompe”; se rompe la administración de sus llaves. Un dato de examen: la probabilidad de colisión de un hash crece con la raíz cuadrada (el ataque de cumpleaños), por eso SHA-1 quedó fuera y SHA-256 es el piso razonable.</p>
+          <h5>El sistema que arranca seguro y el edificio que lo guarda</h5>
+          <p>Del lado de plataforma: <b>TPM</b> (chip que guarda llaves y mide el arranque), arranque seguro y atestación — la cadena que prueba que la máquina encendió con el software esperado. Del lado físico, el examen cubre selección y diseño del sitio, <b>CPTED</b> (prevenir delito con el diseño del entorno: visibilidad, acceso natural, territorialidad), controles de acceso físico por capas y seguridad contra fuego: detectores de humo/calor/llama según la etapa, y agentes correctos por clase de fuego (A madera/papel, B líquidos, C eléctrico, K cocinas) — en un centro de datos manda agente limpio gaseoso, nunca agua sobre equipo energizado. Temperatura y humedad se controlan porque el ambiente también es un atacante.</p>
+          <div class="callout warn"><b>Trampa clásica del Dominio 3:</b> “cifrar con la llave pública del emisor” no existe como firma: se firma con la <b>privada</b> del que firma y se verifica con su pública. Y un hash solo no da confidencialidad ni no repudio: cualquiera puede recalcularlo.</div>
+          <details class="selfcheck"><summary>Comprobación D3 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> Un banco necesita que ningún empleado pueda modificar un balance sin una transacción aprobada por otro. ¿Qué modelo describe eso?<br><b>Respuesta:</b> Clark-Wilson: transacciones bien formadas, programas certificados y separación de funciones para integridad comercial.</p>
+          <p><b>2.</b> Para enviar un archivo grande con confidencialidad a un tercero sin llave compartida previa, ¿qué combinas?<br><b>Respuesta:</b> Esquema híbrido: cifras el archivo con AES y una llave de sesión; cifras esa llave con la llave pública del destinatario. Así viaja todo junto.</p></details>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">4</div><div><h4>Lectura · Dominio 4 — Seguridad de redes y comunicaciones (13%)</h4><p>Cómo viaja la información sin que la lean ni la desvíen en el camino. Es el dominio que tu ruta de pentest refuerza gratis.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>Toda comunicación es un tubo entre dos puntos; este dominio pregunta <b>quién más puede meterse en el tubo y cómo lo evitas</b>. La respuesta corta es siempre la misma estrategia combinada: segmentar (que un tubo no alcance lo que no debe), cifrar el canal (que interceptarlo no sirva) y autenticar los extremos (que el tubo conecte con quien dice ser).</p>
+          <h5>El mapa: OSI y TCP/IP sin memorizar por memorizar</h5>
+          <p>El modelo <b>OSI</b> tiene 7 capas (física, enlace, red, transporte, sesión, presentación, aplicación) y el examen lo usa para ubicar ataques y dispositivos: un hub vive en capa 1, un switch en la 2, un router en la 3, un firewall stateful mira hasta la 4 y un WAF o proxy trabaja en la 7. Si un ataque es “de capa 2” (ej. falsificación de MAC o de ARP dentro de la LAN) un firewall de borde no lo ve: se defiende dentro del segmento. Esa lógica — “¿en qué capa ocurre y qué control vive ahí?” — resuelve buena parte del dominio.</p>
+          <h5>Cifrar el tubo: IPsec, TLS, SSH</h5>
+          <table class="table"><tr><th>Protocolo</th><th>Capa / uso</th><th>Lo que el examen verifica que sabes</th></tr>
+          <tr><td><b>IPsec</b></td><td>Red; VPN sitio a sitio</td><td><b>AH</b> autentica e integra pero no cifra; <b>ESP</b> cifra y autentica. <b>Modo transporte</b> protege el contenido entre hosts; <b>modo túnel</b> envuelve el paquete entero entre gateways. IKE negocia todo.</td></tr>
+          <tr><td><b>TLS 1.2/1.3</b></td><td>Transporte/sesión; web y APIs</td><td>Certificado del servidor, acuerdo de llaves y cifrado simétrico de la sesión. TLS 1.3 elimina algoritmos débiles y acelera el handshake.</td></tr>
+          <tr><td><b>SSH</b></td><td>Aplicación; administración remota</td><td>Sustituye a Telnet/FTP en texto claro. Autenticación por llaves &gt; por contraseña.</td></tr></table>
+          <p>Regla de lectura: si una opción propone mandar credenciales o datos sensibles “por la red interna porque es de confianza”, esa es la respuesta débil. El enfoque moderno (<b>confianza cero</b>) autentica y cifra también adentro.</p>
+          <h5>Levantar muros con criterio: firewalls y segmentación</h5>
+          <p>La evolución del firewall es una escalera de contexto: filtrado de paquetes (IP/puerto, sin memoria) → <b>stateful</b> (recuerda la conversación) → proxy de aplicación (termina y reabre la conexión, inspecciona el contenido) → <b>NGFW</b> (identidad, aplicación, inspección) → <b>WAF</b> (especialista en HTTP, protege la aplicación web). Ninguno sustituye a la <b>segmentación</b>: dividir la red en zonas según confianza (usuarios, servidores, DMZ, respaldos, gestión) con reglas explícitas entre ellas. La <b>microsegmentación</b> lleva la idea hasta cada carga de trabajo. Tu red de lab (192.168.56.0/24 aislada) es segmentación en miniatura: las víctimas no salen y la red real no entra. En la empresa, la pregunta “¿la DMZ puede iniciar conexiones hacia la base de datos?” es exactamente este dominio con traje de CISO.</p>
+          <h5>Controlar quién entra a la red: NAC y Wi-Fi</h5>
+          <p><b>802.1X</b> es el portero: antes de dar acceso, el dispositivo y/o usuario se autentica (con <b>EAP</b> y un servidor RADIUS detrás); quien no pasa, cae en una VLAN de cuarentena. En Wi-Fi el piso actual es <b>WPA2</b> y el objetivo <b>WPA3</b>, siempre en modo empresarial (credenciales individuales vía 802.1X) en vez de una contraseña compartida que todo el mundo conoce y nadie rota. RADIUS también deja la contabilidad: quién se conectó, cuándo y desde qué equipo — evidencia que un auditor ama.</p>
+          <h5>Los ataques del tubo y su antídoto</h5>
+          <table class="table"><tr><th>Ataque</th><th>Qué hace</th><th>Controles</th></tr>
+          <tr><td>Intermediario (MitM) / intercepción</td><td>Se sienta entre los extremos y lee o altera</td><td>TLS/IPsec con validación de certificados; HSTS en web</td></tr>
+          <tr><td>Suplantación (spoofing IP/MAC/ARP)</td><td>Finge ser otro equipo en la red</td><td>Filtrado de origen, inspección dinámica de ARP, 802.1X</td></tr>
+          <tr><td>DoS / DDoS</td><td>Satura servicio o enlace</td><td>Capacidad, filtrado aguas arriba, CDN/Anycast, plan con el ISP. Es un problema de <b>disponibilidad</b></td></tr>
+          <tr><td>Sniffing en LAN</td><td>Escucha tráfico ajeno</td><td>Switches (no hubs), cifrado extremo a extremo</td></tr>
+          <tr><td>DNS manipulado</td><td>Te manda a un servidor falso</td><td>DNSSEC valida origen; DNS cifrado protege la consulta</td></tr></table>
+          <div class="callout warn"><b>Trampa clásica del Dominio 4:</b> AH no cifra. Si la pregunta pide confidencialidad en IPsec, la respuesta es ESP. Y “modo túnel” es el de la VPN entre sedes; “transporte”, entre dos hosts.</div>
+          <details class="selfcheck"><summary>Comprobación D4 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> El portal de asegurados sufre un ataque de inundación que tumba el enlace. ¿Qué pilar de la tríada está bajo ataque y cuál es la primera llamada correcta?<br><b>Respuesta:</b> Disponibilidad. Se activa el plan de mitigación con el proveedor/CDN aguas arriba: un firewall local no puede absorber lo que ya saturó tu enlace.</p>
+          <p><b>2.</b> ¿Por qué un WAF no sustituye la segmentación interna?<br><b>Respuesta:</b> Operan en capas distintas: el WAF protege la aplicación web del tráfico que entra; la segmentación limita el movimiento una vez que algo ya está dentro.</p></details>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">5</div><div><h4>Lectura · Dominio 5 — Gestión de identidad y acceso, IAM (13%)</h4><p>El perímetro moderno es la identidad. Quien controla las cuentas, controla la empresa.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>Casi todo lo demás en este centro (Active Directory, pivoting, privilegios) gira alrededor de una pregunta: <b>¿cómo sabes que quien pide acceso es quien dice ser, y cómo le das exactamente lo que necesita y nada más?</b> Este dominio es esa respuesta completa: identificar, autenticar, autorizar y poder rendir cuentas.</p>
+          <h5>Los cuatro verbos, en orden</h5>
+          <p><b>Identificación:</b> “yo soy j.perez” (una afirmación). <b>Autenticación:</b> “lo pruebo” con factores. <b>Autorización:</b> “esto es lo que j.perez puede hacer”. <b>Rendición de cuentas (accountability):</b> “todo quedó registrado y es atribuible”. El examen castiga confundirlos: un login exitoso prueba autenticación, pero si la cuenta es compartida no hay rendición de cuentas — por eso las cuentas genéricas son un hallazgo.</p>
+          <h5>Factores y biometría sin mitos</h5>
+          <p>Los factores son: algo que <b>sabes</b> (contraseña, PIN), algo que <b>tienes</b> (token, tarjeta, móvil), algo que <b>eres</b> (biometría) y factores de contexto como <b>dónde estás</b> y <b>cuándo</b>. La autenticación multifactor exige factores de <b>categorías distintas</b>: contraseña + PIN es un solo factor disfrazado; contraseña + código del móvil sí es MFA. En biometría el examen pide tres siglas: <b>FAR</b> (aceptar a un impostor: el error grave), <b>FRR</b> (rechazar al legítimo: el error molesto) y <b>CER</b> (el punto donde FAR y FRR se cruzan: cuanto menor el CER, mejor el sistema). Si debes elegir entre bajar FAR o FRR en una bóveda, bajas FAR aunque incomode; en un gimnasio, al revés.</p>
+          <h5>Kerberos explicado como una boletería</h5>
+          <p>En Active Directory no presentas tu contraseña a cada servidor: vas una vez a la boletería (<b>AS</b>: te autenticas y recibes el <b>TGT</b>, tu pase general), y con ese pase pides boletos por ventanilla (<b>TGS</b>) para cada servicio. El servidor valida el boleto sin hablar con la boletería. Todo lo que ataca tu ruta de AD (Fase 5) abusa esta confianza: boletos cifrados con llaves derivadas de contraseñas débiles se pueden romper offline. Por eso el dominio exige, del lado defensivo, contraseñas largas en cuentas de servicio, rotación y monitoreo de pedidos anormales de boletos.</p>
+          <h5>SSO y federación: tres nombres que no son lo mismo</h5>
+          <table class="table"><tr><th>Pieza</th><th>Qué es</th><th>Frase de examen</th></tr>
+          <tr><td><b>SAML</b></td><td>Federación empresarial: un proveedor de identidad (IdP) emite aserciones firmadas y el servicio (SP) confía en ellas</td><td>“Asersión”, IdP y SP = SAML</td></tr>
+          <tr><td><b>OAuth 2.0</b></td><td>Autorización delegada: “esta app puede ver mis archivos” sin darle tu contraseña</td><td>OAuth autoriza; por sí solo <b>no</b> autentica</td></tr>
+          <tr><td><b>OpenID Connect</b></td><td>Capa de identidad sobre OAuth 2.0: añade el token de identidad</td><td>Si la pregunta es “¿quién es el usuario?”, es OIDC</td></tr></table>
+          <h5>Modelos de autorización: quién decide qué</h5>
+          <p><b>MAC</b>: el sistema decide por etiquetas de clasificación (mundo militar; el usuario no perdona). <b>DAC</b>: el dueño del recurso decide (permisos de archivo clásicos; flexible y peligroso). <b>RBAC</b>: por rol/puesto — el estándar empresarial porque escala con RRHH. <b>ABAC</b>: por atributos y contexto (rol + horario + ubicación + tipo de dispositivo): el más fino y el más complejo. Todo esto se sirve sobre dos principios eternos: <b>privilegio mínimo</b> (solo lo necesario para la función) y <b>separación de funciones</b> (nadie completa solo un proceso sensible: quien pide no aprueba, quien aprueba no paga).</p>
+          <h5>El ciclo de vida: donde se gana o se pierde</h5>
+          <p>La mayoría de las brechas de acceso no son ataques: son cuentas olvidadas. El ciclo sano es <b>alta</b> (aprovisionar solo tras autorización del dueño y de RRHH), <b>cambio</b> (al cambiar de rol, se retira lo anterior antes de dar lo nuevo — el “arrastre de privilegios” es el enemigo), <b>baja</b> (inmediata al salir; lo primero que se desactiva) y <b>revisión/recertificación periódica</b> (cada dueño confirma que sus accesos siguen vigentes; lo no confirmado se revoca). Las cuentas privilegiadas viven aparte: bóveda (<b>PAM</b>) que las entrega por tiempo limitado, con sesión grabada y contraseñas que rotan solas. En examen, cualquier opción que deje a un administrador usando su cuenta Domain Admin para leer correo es la respuesta incorrecta.</p>
+          <div class="callout warn"><b>Trampa clásica del Dominio 5:</b> “identificación” y “autenticación” no son una sola cosa, y el orden importa. Otra favorita: la revisión de accesos la aprueba el <b>dueño del dato/del sistema</b>, no TI a solas.</div>
+          <details class="selfcheck"><summary>Comprobación D5 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> Contraseña + pregunta secreta, ¿es MFA?<br><b>Respuesta:</b> No. Ambos son “algo que sabes”: un solo factor. MFA combina categorías distintas.</p>
+          <p><b>2.</b> Una empleada pasa de reclamaciones a suscripciones y conserva ambos accesos “por si acaso”. ¿Qué falló?<br><b>Respuesta:</b> El proceso de cambio (mover) del ciclo de vida: debió retirarse el acceso anterior; eso además es arrastre de privilegios y lo detecta la recertificación.</p></details>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">6</div><div><h4>Lectura · Dominio 6 — Evaluación y pruebas de seguridad (12%)</h4><p>Tu terreno como CISO: cómo se prueba que un control sirve, con papel firmado y evidencia.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>Implementar controles es la mitad del trabajo; la otra mitad es <b>demostrar que funcionan</b>. Este dominio es el menú de formas de probarlos y cómo interpretar lo que devuelven. Tu Cyber Remediation Portal vive de esto: hallazgo, evidencia, dueño, fecha y retest.</p>
+          <h5>Escaneo no es pentest (y el examen lo sabe)</h5>
+          <table class="table"><tr><th></th><th>Escaneo de vulnerabilidades</th><th>Prueba de penetración</th></tr>
+          <tr><td>Qué hace</td><td>Detecta y lista debilidades conocidas, sin explotar</td><td>Exploita con hipótesis, encadena hallazgos y prueba impacto</td></tr>
+          <tr><td>Mejor versión</td><td><b>Con credenciales</b>: ve lo que falta por dentro, no solo lo que asoma</td><td>Con alcance y ROE firmados</td></tr>
+          <tr><td>Devuelve</td><td>Inventario priorizado de debilidades</td><td>Ruta de ataque probada y evidencia de impacto</td></tr></table>
+          <p>El nivel de conocimiento define el tipo de prueba: <b>sin conocimiento</b> (el probador parte de cero, como un atacante externo), <b>parcial</b> (se le entrega contexto, lo más rentable en empresas) y <b>total</b> (acceso completo, ideal para validar un sistema específico). Las etiquetas “caja negra/gris/blanca” describen lo mismo. Y los equipos: <b>Red</b> ataca, <b>Blue</b> defiende, <b>Purple</b> colabora en vivo para que cada ataque deje una detección aprendida — el modelo de tu Fase 6.</p>
+          <h5>Los informes SOC, en criollo</h5>
+          <p>Cuando un proveedor custodia datos o procesos, su control interno te importa. <b>SOC 1</b> trata de controles que afectan los estados financieros del cliente. <b>SOC 2</b> evalúa seguridad, disponibilidad, integridad de procesamiento, confidencialidad y privacidad (los criterios de servicios de confianza): es el que pedirás a tus proveedores críticos. <b>SOC 3</b> es la versión pública y resumida, para marketing. La segunda distinción es temporal: <b>Tipo I</b> = el diseño del control en una fecha (“¿está bien pensado?”); <b>Tipo II</b> = su efectividad operando durante un período, típicamente 6–12 meses (“¿funcionó de verdad?”). Un Tipo I recién firmado no demuestra operación: pedirás el Tipo II y leerás las excepciones y los controles complementarios que el informe exige a TU empresa.</p>
+          <h5>Evidencia, métricas y cierre</h5>
+          <p>Este dominio pide madurez de medición: revisar logs y cuentas privilegiadas de forma rutinaria, definir <b>KPI</b> (cómo va el proceso: ej. % de parches a tiempo) y <b>KRI</b> (cuánto riesgo se acumula: ej. críticos vencidos — tu portal marca 49), y tratar los hallazgos como un ciclo: detectar → validar explotación y contexto de negocio → dueño y fecha por severidad → remediación → <b>retest con evidencia</b>. Las pruebas de ingeniería social y las revisiones de código también viven aquí como técnicas de evaluación, siempre autorizadas. Si una opción del examen “cierra” un hallazgo solo porque el área dijo que lo arregló, sospecha: el cierre profesional se retestea.</p>
+          <div class="callout warn"><b>Trampa clásica del Dominio 6:</b> un escaneo limpio no significa “sin riesgo”; significa “sin debilidades conocidas detectadas con este método”. Y un SOC 2 Tipo I no prueba que el control operó todo el año: eso es el Tipo II.</div>
+          <details class="selfcheck"><summary>Comprobación D6 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> Tu proveedor de nube presenta un SOC 2 Tipo I de hace un mes y pide que aceptes su seguridad “ya auditada”. ¿Qué respondes como CISO?<br><b>Respuesta:</b> El Tipo I solo valida el diseño en un punto en el tiempo. Pides el Tipo II del período, revisas excepciones y los controles complementarios que te toca operar a ti.</p>
+          <p><b>2.</b> ¿Cuándo es mejor un escaneo con credenciales que uno sin ellas?<br><b>Respuesta:</b> Para gestión continua de vulnerabilidades: ve parches faltantes y configuraciones internas con mucho menos ruido y falsos positivos. El sin credenciales sigue sirviendo para ver la superficie externa.</p></details>
+          <p class="small muted">Práctica en este centro: módulos Pentest empresa, ROE y Escenarios — son este dominio hecho ejercicio.</p>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">7</div><div><h4>Lectura · Dominio 7 — Operaciones de seguridad (13%)</h4><p>El día a día que sostiene todo lo demás: operar, detectar, responder y recuperar.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>Los dominios anteriores diseñan; este opera. La tesis del dominio: <b>la seguridad no es un proyecto, es una operación continua</b>, y su momento de la verdad es el incidente. Todo lo que el examen pregunta aquí gira en torno a tres disciplinas: responder incidentes sin destruir evidencia, recolectar prueba que aguante escrutinio, y mantener el servicio vivo o devolverlo en el tiempo que el BIA mandó.</p>
+          <h5>Respuesta a incidentes: el orden es la respuesta</h5>
+          <p>El ciclo que el examen premia: <b>preparación</b> (plan, equipo, herramientas, simulacros — antes de que pase) → <b>detección y análisis</b> (confirmar que es incidente y su alcance) → <b>contención, erradicación y recuperación</b> (primero contener sin destruir, luego sacar al atacante, luego volver con monitoreo reforzado) → <b>lecciones aprendidas</b> (la reunión que convierte el incidente en mejoras con dueño y fecha). Detalles que puntúan: la contención rápida gana a la erradicación precipitada; se trabaja sobre imágenes y copias, no sobre el disco original; y ante la duda entre “apagar ya” y preservar, el examen elige preservar evidencia primero — salvo que el daño en curso mande lo contrario, y eso se documenta.</p>
+          <h5>Forense: la prueba se recoge en el orden en que desaparece</h5>
+          <p>La <b>orden de volatilidad</b> manda: primero lo que se pierde al parpadear — registros del procesador y caché, memoria RAM, conexiones de red activas — y al final lo persistente: el disco y los respaldos. Sobre el disco se trabaja con <b>imagen bit a bit</b> usando <b>bloqueador de escritura</b>, verificando con hash que la copia es idéntica al original. Y envuelve todo la <b>cadena de custodia</b>: quién tomó la evidencia, cuándo, cómo se selló y cada mano por la que pasó. Sin cadena de custodia, la mejor evidencia técnica muere en el primer cuestionamiento legal. Frase de examen: la computadora del incidente es una escena del crimen hasta que el equipo forense la libere.</p>
+          <h5>Respaldo y disponibilidad operativa</h5>
+          <p>La regla <b>3-2-1</b>: al menos 3 copias de los datos, en 2 medios distintos, 1 fuera del sitio (y hoy se lee con un añadido práctico: una copia inmutable o aislada contra ransomware). Los tipos de respaldo se eligen por RTO/RPO: completo (lento de hacer, rápido de restaurar), incremental (solo cambios desde el último respaldo; restauración en cadena) y diferencial (cambios desde el último completo; punto medio). En almacenamiento, <b>RAID</b> protege contra falla de disco, no contra borrado o ransomware: RAID 0 reparte sin protección (prohibido para datos que importan), RAID 1 espejo, RAID 5 paridad con un disco de tolerancia, RAID 6 doble paridad, RAID 10 espejos repartidos para rendimiento y redundancia. La alta disponibilidad (clústeres, balanceo, sitios alternos caliente/tibio/frío) se compra contra el RTO del Dominio 1: nadie paga un sitio caliente para un proceso con RTO de una semana.</p>
+          <h5>La operación silenciosa: parches, cambios y registros</h5>
+          <p>El mantenimiento que evita incidentes: gestión de <b>parches</b> probados antes de producción (con plan de reversa) y gestión de <b>cambios</b> donde quien desarrolla no aprueba ni despliega solo — la misma separación de funciones del Dominio 1, aplicada a diario. Los registros se centralizan (SIEM) protegidos contra alteración, con revisión real y no solo acumulación; el SOAR automatiza la respuesta repetitiva. Y las operaciones privilegiadas se vigilan con controles de personal ya conocidos: rotación, vacaciones obligatorias, privilegio mínimo y doble control en acciones irreversibles. El examen, en este dominio, siempre desconfía de “el administrador de siempre, sin registro, sin relevo”.</p>
+          <div class="callout warn"><b>Trampa clásica del Dominio 7:</b> ante un equipo comprometido con datos volátiles, la primera acción no es apagarlo ni “limpiarlo”: es preservar evidencia según volatilidad y contener. Y RAID no es respaldo: protege de un disco muerto, no de un borrado.</div>
+          <details class="selfcheck"><summary>Comprobación D7 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> Encuentras un servidor con intrusión activa. Hay RAM con conexiones vivas y un disco intacto. ¿Qué capturas primero?<br><b>Respuesta:</b> La evidencia volátil: memoria y estado de red antes que la imagen de disco, siguiendo el orden de volatilidad, y documentando cadena de custodia desde el primer paso.</p>
+          <p><b>2.</b> Tu respaldo es completo dominical + incrementales diarios. Se pierde el incremental del miércoles. ¿Qué pasa al restaurar?<br><b>Respuesta:</b> La cadena se rompe: puedes llegar hasta el martes. Por eso se prueba la restauración completa periódicamente, no solo que el job “termine bien”.</p></details>
+        </div>
+      </article>
+
+      <article class="lectura">
+        <div class="lectura-head"><div class="phase-num">8</div><div><h4>Lectura · Dominio 8 — Seguridad en el desarrollo de software (10%)</h4><p>El dominio menor en peso y enorme en impacto: donde nacen (o se previenen) las vulnerabilidades que luego pentesteas.</p></div></div>
+        <div class="lectura-body">
+          <h5>La idea central</h5>
+          <p>Un defecto encontrado en diseño cuesta corregir uno; en producción, cien. Este dominio exige meter seguridad <b>en cada fase del SDLC</b> en vez de probar al final, y hablar con desarrollo en su idioma: requisitos, diseño, código, pruebas, despliegue y mantenimiento — con un control de seguridad esperándote en cada estación.</p>
+          <h5>Seguridad fase por fase</h5>
+          <table class="table"><tr><th>Fase</th><th>Qué se hace en seguridad</th></tr>
+          <tr><td>Requisitos</td><td>Requisitos de seguridad y de abuso: qué NO debe poder hacer nadie; criterios de aceptación verificables.</td></tr>
+          <tr><td>Diseño</td><td>Modelado de amenazas (qué puede salir mal, contra qué activo) y decisiones de arquitectura: dónde se autentica, dónde se cifra.</td></tr>
+          <tr><td>Código</td><td>Estándares de codificación segura, revisión de código y análisis estático (SAST) sobre el fuente.</td></tr>
+          <tr><td>Pruebas</td><td>Análisis dinámico (DAST) sobre la app corriendo, pruebas de penetración del aplicativo y fuzzing de entradas.</td></tr>
+          <tr><td>Despliegue</td><td>Firma de código y de artefactos, línea base endurecida y gestión de cambios (Dominio 7).</td></tr>
+          <tr><td>Mantenimiento</td><td>Parches, gestión de vulnerabilidades del aplicativo y respuesta cuando aparece el CVE de tu stack.</td></tr></table>
+          <p>Los modelos importan por el control: cascada congela requisitos temprano (seguridad planificable pero tardía), ágil permite corregir por iteración si el backlog incluye seguridad desde el sprint cero, y <b>DevSecOps</b> automatiza las verificaciones dentro del pipeline para que “seguro” no dependa de la memoria de nadie un viernes a las 5 p.m.</p>
+          <h5>El vocabulario común: OWASP y sus causas raíz</h5>
+          <p>El examen espera que reconozcas las clases de falla del OWASP Top 10 por su <b>causa raíz</b>, no por su payload — exactamente el enfoque de tu tabla DVWA: control de acceso roto (el usuario llega a objetos ajenos por no verificar autorización en el servidor), inyección (el remedio es <b>consultas parametrizadas</b> y validación de entrada con lista de permitidos), fallas criptográficas (datos sensibles sin cifrar o con algoritmos muertos), configuración insegura (errores verbosos, paneles por defecto) y componentes vulnerables (dependencias sin parchar). Las defensas que se repiten: validar entrada en el servidor, codificar la salida según el contexto, autorizar en cada objeto, y registrar sin guardar secretos en los logs.</p>
+          <h5>Código confiable y cadena de suministro</h5>
+          <p>¿Cómo sabes que el binario que despliegas es el que se revisó? <b>Firma de código</b> y verificación de integridad en el pipeline. ¿Y del código que no escribiste? La cadena de suministro pide inventario de componentes (con su lista de materiales, SBOM), fuentes oficiales, fijar versiones y parchar dependencias con la misma disciplina que los servidores — un Log4j en tu portal pesa más que muchos hallazgos del escáner. En APIs, el dominio pide autenticación y autorización por objeto, límites de velocidad y no exponer más campos de los que la pantalla usa. En bases de datos: vistas para limitar lo visible, cifrado de lo sensible, y ojo con <b>inferencia y agregación</b>: datos inocentes que, juntados, revelan lo clasificado.</p>
+          <h5>Malware y madurez</h5>
+          <p>El examen clasifica el malware por cómo se propaga y qué hace: virus (necesita anfitrión y acción), gusano (se propaga solo), troyano (se disfraza), ransomware (cifra y extorsiona), rootkit (se esconde en nivel bajo) y las variantes sin archivo que viven en memoria. Del lado del proceso, los modelos de madurez como <b>OWASP SAMM</b> miden qué tan sistemático es tu programa de seguridad de software en vez de depender de héroes. Conexión directa con tu mundo: cada fila de tu tabla de DVWA (Fase 3.4) es una pregunta de este dominio con otro traje; estudia causa raíz y mitigación, nunca el payload.</p>
+          <div class="callout warn"><b>Trampa clásica del Dominio 8:</b> la validación del lado del cliente es comodidad, no control: se evade con un proxy (tu Burp lo demuestra). La respuesta segura siempre valida y autoriza en el servidor.</div>
+          <details class="selfcheck"><summary>Comprobación D8 — inténtalo antes de abrir</summary>
+          <p><b>1.</b> Una app concatena el texto del usuario en la consulta SQL y “lo filtra” con JavaScript en el navegador. Nombra los dos errores.<br><b>Respuesta:</b> Inyección por concatenación (falta la consulta parametrizada) y validación en el cliente, evadible con cualquier proxy. Ambos se corrigen en el servidor.</p>
+          <p><b>2.</b> ¿En qué fase sale más barato prohibir que un ajustador vea reclamaciones de otra región?<br><b>Respuesta:</b> En requisitos y diseño (qué NO debe poder hacer cada rol), no en pruebas al final. Es la tesis económica del dominio entero.</p></details>
+          <p class="small muted">Práctica en este centro: Fase 3 (DVWA y Burp) — causa raíz y mitigación por vulnerabilidad.</p>
+        </div>
+      </article>
+
+      <h3>Plan integrado: CISSP primero, CISA después (con pentest en paralelo)</h3>
+      <p class="muted">Tu orden es fijo: <b>el examen CISSP va primero</b> y el CISA arranca al aprobarlo. El pentest corre en paralelo todo el camino porque refuerza los dominios de ambas certificaciones. Sin volverte loco: cada semana avanza un bloque de examen y un bloque de lab.</p>
+      <table class="table">
+        <tr><th>Semanas</th><th>Certificación</th><th>Pentest / lab</th><th>CISA</th></tr>
+        <tr><td>1–2</td><td>CISSP Dominios 1 y 2 + cálculo ALE</td><td>Armar el lab + Fase 1</td><td>— (arranca al aprobar CISSP)</td></tr>
+        <tr><td>3–4</td><td>CISSP Dominio 3 (modelos y cripto)</td><td>Fase 2: Nmap y enumeración</td><td>—</td></tr>
+        <tr><td>5–6</td><td>CISSP Dominios 4 y 5</td><td>Fase 3: DVWA + Burp</td><td>—</td></tr>
+        <tr><td>7–8</td><td>CISSP Dominio 6 (tu terreno)</td><td>Escenarios A y B</td><td>—</td></tr>
+        <tr><td>9–10</td><td>CISSP Dominios 7 y 8</td><td>Fases 4–5: GOAD y BloodHound</td><td>—</td></tr>
+        <tr><td>11</td><td>Simulacros CISSP tipo CAT (sin volver atrás)</td><td>Mini-pentest completo en lab</td><td>—</td></tr>
+        <tr><td>12</td><td><b>Examen CISSP</b></td><td>Reporte final del lab</td><td>—</td></tr>
+        <tr><td>13–14</td><td>(ya certificado) Refuerzo con CPE</td><td>Fase 6: Purple Team</td><td>CISA Dominios 1–2: proceso de auditoría y gobierno de TI</td></tr>
+        <tr><td>15–16</td><td>—</td><td>Ejercicio autorizado en empresa (con ROE)</td><td>CISA Dominios 3–4: adquisición/desarrollo y operaciones</td></tr>
+        <tr><td>17</td><td>—</td><td>Retest y cierre de hallazgos</td><td>CISA Dominio 5 + simulacros</td></tr>
+        <tr><td>18</td><td>—</td><td>—</td><td><b>Examen CISA</b></td></tr>
+      </table>
+      <div class="callout"><b>El día del examen:</b> el CAT no deja regresar ni marcar para después. Descarta dos opciones, piensa como gerente (“¿qué protege el negocio y cumple la política?”) y no pelees con una pregunta: si no sale en 90 segundos, elige la mejor y sigue. El algoritmo se calibra con tus primeras respuestas; respira.</div>
+      <div class="callout warn"><b>Tu material de estudio es este:</b> la lectura completa por dominio que acabas de ver es tu texto principal — léela en orden, haz cada comprobación y marca cada dominio al poder explicarlo sin mirar. El libro oficial de estudio CISSP de ISC2/Sybex y bancos de preguntas externas son un refuerzo válido si luego quieres más profundidad y más volumen de preguntas, pero <b>no necesitas ningún libro para empezar a leer hoy</b>. La regla que salva puntos: “piensa como gerente” — primero riesgo, política y negocio; la herramienta va después.</div>
+    </section>
+
+    <!-- CISA -->
+    <section class="card section hidden" id="cisa">
+      <h2>CISA (ISACA): auditar sistemas de información como un profesional</h2>
+      <p class="muted">El CISA — <i>Certified Information Systems Auditor</i> de ISACA — es la certificación de referencia mundial en auditoría, control y aseguramiento de sistemas de información. Es tu <b>segunda</b> meta: se estudia <b>después de aprobar el CISSP</b>, porque buena parte de su base (gobierno, riesgo, controles e identidad) ya la tendrás dominada.</p>
+
+      <h3>El examen, sin humo</h3>
+      <table class="table">
+        <tr><th>Dato</th><th>Detalle</th></tr>
+        <tr><td>Formato</td><td>150 preguntas de selección múltiple en 4 horas, en centro de examen o en línea con supervisión.</td></tr>
+        <tr><td>Para aprobar</td><td>Puntuación escalada de 200 a 800; necesitas <b>450 o más</b>. No es un porcentaje: ISACA escala las puntuaciones entre sesiones.</td></tr>
+        <tr><td>Experiencia requerida</td><td>5 años de experiencia verificada en auditoría, control, aseguramiento o seguridad de sistemas de información. La educación universitaria y ciertas certificaciones sustituyen hasta 3 de esos años.</td></tr>
+        <tr><td>Después</td><td>Solicitud de certificación con verificación de experiencia, adherencia al Código de Ética Profesional de ISACA, 120 horas CPE por ciclo de 3 años (mínimo 20 al año) y cuota anual de mantenimiento.</td></tr>
+        <tr><td>Peso por dominio (aprox.)</td><td>D1 21% · D2 17% · D3 12% · D4 23% · D5 27% — la protección de activos y las operaciones pesan más de la mitad del examen.</td></tr>
+      </table>
+
+      <div class="callout warn"><b>La mentalidad CISA: piensa como auditor independiente, no como operador.</b> El auditor no implementa controles ni “arregla” sistemas: evalúa si el control existe, si está diseñado correctamente y si opera con evidencia. Si una opción te pone a configurar algo, casi siempre es la respuesta equivocada; la correcta suele ser evaluar, verificar, comparar contra el criterio y reportar la desviación.</div>
+
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">A</div><div><h3>Los 5 dominios, uno por uno</h3><p>Marca cada dominio como completado cuando puedas explicar, con un ejemplo de tu empresa, qué auditarías y con qué evidencia.</p></div></div>
+
+        <div class="lesson" data-lesson="a1l1">
+          <div class="lesson-top"><h4>Dominio 1 — Proceso de auditoría de sistemas de información (21%)</h4><span class="tag green">Tu punto de partida</span></div>
+          <p><b>Conceptos clave:</b> los estándares y guías de ISACA (el marco ITAF es tu referencia), auditoría <b>basada en riesgo</b> (primero se evalúa el riesgo, después se decide qué auditar), tipos de auditoría (de cumplimiento, operacional, integrada, forense), planificación: objetivo, alcance, criterios y universo auditable; <b>materialidad</b> (qué tan grande debe ser una desviación para importar), riesgo de auditoría (inherente, de control y de detección), evidencia <b>suficiente, confiable, relevante y útil</b>, técnicas de muestreo (estadístico vs. de juicio, de atributos vs. de variables) y técnicas asistidas por computadora (CAAT): datos de prueba, simulación paralela y facilidad de auditoría integrada.</p>
+          <div class="callout"><b>Trampa clásica:</b> la evidencia más confiable es la que viene de una fuente independiente y se obtiene directamente (observación, reejecución, confirmación externa). Lo que el auditado te cuenta en una entrevista es lo más débil hasta corroborarlo.</div>
+          <div class="callout"><b>Conexión con tu portal:</b> tu <i>Cyber Remediation Portal</i> es exactamente un universo auditable con hallazgos, dueños y fechas. Un auditor CISA preguntaría: ¿quién valida el cierre?, ¿con qué evidencia?, ¿qué pasa con los vencidos? Esas preguntas ya las vives.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="a1l2">
+          <div class="lesson-top"><h4>Dominio 2 — Gobierno y gestión de TI (17%)</h4><span class="tag">Gobierno</span></div>
+          <p><b>Conceptos clave:</b> gobierno de TI vs. gestión de TI (la <b>junta directiva y la alta dirección gobiernan</b>; la gerencia ejecuta), alineación estratégica entre TI y negocio, marcos de referencia como COBIT, gestión de riesgos de TI y apetito de riesgo, políticas, estándares y procedimientos (la misma jerarquía documental del CISSP D1), gestión de recursos y de desempeño (indicadores KPI/KGI, cuadros de mando), estructuras de comités (comité directivo de TI, comité de auditoría), gestión de proveedores y contratos (SLA, derecho de auditoría, <i>escrow</i> de código) y aseguramiento de calidad (QA independiente del equipo que desarrolla).</p>
+          <div class="callout warn"><b>Trampa clásica:</b> la responsabilidad última del gobierno de TI es de la junta/alta dirección, nunca del auditor ni del CIO solos. Y un SLA sin penalidades ni medición es papel, no control.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="a1l3">
+          <div class="lesson-top"><h4>Dominio 3 — Adquisición, desarrollo e implementación de SI (12%)</h4><span class="tag">Proyectos y SDLC</span></div>
+          <p><b>Conceptos clave:</b> ciclo de vida de desarrollo (SDLC) y dónde entra el auditor (desde el caso de negocio, no al final), casos de negocio y estudios de factibilidad, metodologías (cascada, ágil, DevOps) y qué cambia en el control, gestión de proyectos: alcance, tiempo, costo y el rol de la oficina de proyectos, controles de conversión y migración de datos, <b>gestión de cambios</b> (segregación entre quien desarrolla, quien aprueba y quien pasa a producción), revisión <b>post-implementación</b> (¿se cumplieron los beneficios prometidos?) y auditoría de adquisiciones (RFP, selección de proveedor, cláusulas de auditoría).</p>
+          <div class="callout"><b>Trampa clásica:</b> el momento de mayor valor del auditor en un proyecto es <b>antes</b> de firmar y durante el diseño, no cuando el sistema ya salió a producción y solo queda lamentar. La revisión post-implementación compara contra el caso de negocio original.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="a1l4">
+          <div class="lesson-top"><h4>Dominio 4 — Operaciones de SI y resiliencia del negocio (23%)</h4><span class="tag green">Peso pesado</span></div>
+          <p><b>Conceptos clave:</b> gestión de operaciones (procesos por lotes, monitoreo, gestión de activos y licencias), gestión de incidentes y problemas (la raíz causa, no solo el síntoma), gestión de cambios, liberaciones y configuraciones en producción, gestión de niveles de servicio, y la resiliencia: <b>BIA</b> como fundamento, estrategias de continuidad, <b>RTO</b> (tiempo máximo para restaurar) y <b>RPO</b> (pérdida de datos tolerable en tiempo), planes BCP/DRP, tipos de pruebas del plan (de escritorio, simulación, en paralelo, interrupción total), esquemas de respaldo (completo, incremental, diferencial) y sitios alternos (caliente, tibio, frío).</p>
+          <div class="callout warn"><b>Trampa clásica:</b> el respaldo que nunca se prueba restaurar no es un control: es una esperanza. El auditor pide evidencia de restauraciones de prueba con fecha, resultado y responsable — lo mismo que debes exigirle a tu propio equipo.</div>
+          <div class="callout"><b>Conexión directa:</b> RTO, RPO y BIA aparecen idénticos en el CISSP D1/D7. Cuando llegues aquí desde el CISSP, este dominio es repaso aplicado a auditoría.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="a1l5">
+          <div class="lesson-top"><h4>Dominio 5 — Protección de activos de información (27%)</h4><span class="tag green">El más pesado</span></div>
+          <p><b>Conceptos clave:</b> cómo auditar la seguridad que ya estudias en el CISSP: políticas y clasificación de activos, control de acceso lógico (identificación, autenticación, autorización, privilegio mínimo, revisión de accesos), gestión de identidades y cuentas privilegiadas, criptografía y PKI desde el punto de vista del control (gestión de llaves, custodios, segregación), seguridad de red (segmentación, firewalls, monitoreo), gestión de vulnerabilidades y pruebas de penetración <b>como objeto de auditoría</b> (¿se hacen?, ¿se remedian?, ¿con retest?), registros y monitoreo (logs protegidos, revisión, retención), seguridad física y ambiental, y privacidad de datos personales.</p>
+          <div class="callout"><b>Tu ventaja injusta:</b> tú auditarás esto habiendo corrido el ataque del otro lado. Cuando un proveedor te entregue un “pentest” que es un escaneo con logo, lo detectas en dos preguntas — ese criterio es exactamente lo que el Dominio 5 evalúa.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="empresa">Ver Pentest empresa (cómo exigirlo)</button><button class="btn small" data-jump="cissp">Repasar CISSP D5 y D6</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <h3>Estrategia de estudio y de examen</h3>
+      <table class="table">
+        <tr><th>Fase</th><th>Qué haces</th></tr>
+        <tr><td>1. Base</td><td>Manual de revisión CISA de ISACA como columna vertebral; este centro para convertir cada dominio en ejemplos de tu empresa.</td></tr>
+        <tr><td>2. Preguntas</td><td>La base de preguntas y respuestas de práctica de ISACA (QAE) es la referencia más cercana al examen real. Meta: cientos de preguntas con explicación leída, no solo el marcador.</td></tr>
+        <tr><td>3. Simulacros</td><td>Bloques cronometrados de 150 preguntas en 4 horas. El CISA no es adaptativo: puedes volver atrás y marcar preguntas para revisar, úsalo.</td></tr>
+        <tr><td>El día del examen</td><td>Descarta primero lo que te ponga a “implementar” o “configurar”; la respuesta del auditor es evaluar, verificar con evidencia y reportar. Lee cada pregunta buscando el rol: si no eres el auditor en la opción, sospecha.</td></tr>
+      </table>
+      <div class="callout"><b>Orden oficial de tu plan:</b> CISSP primero (semanas 1–12 del plan integrado), CISA después (semanas 13–18). No los mezcles el mismo mes: el CISSP piensa como gerente que protege el negocio; el CISA piensa como auditor independiente que lo verifica. Son sombreros distintos y el examen castiga confundirlos.</div>
+    </section>
+
+    <!-- PLAN 12 SEMANAS -->
+    <section class="card section hidden" id="plan12">
+      <h2>Plan de 12 semanas para salir operativo (nivel CISO)</h2>
+      <p class="muted">2–3 sesiones por semana de 90 minutos. Cada semana cierra con un entregable, no solo con “vi un video”. Si una semana no cierra, se repite: así se construye criterio.</p>
+      <p class="muted">Este es el plan de la ruta de pentest. Tu preparación de certificaciones sigue otro orden fijo: <b>CISSP primero y CISA después</b>, con el pentest en paralelo. El detalle semana a semana está en el <b>Plan integrado</b> al final de la sección CISSP.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="cissp">Ver plan integrado (CISSP → CISA + Pentest)</button></div>
+      <table class="table">
+        <tr><th>Semana</th><th>Foco</th><th>Entregable que guardas</th></tr>
+        <tr><td>1</td><td>Linux + redes + metodología</td><td>Cheat sheet propio de 30 comandos con ejemplo</td></tr>
+        <tr><td>2</td><td>Nmap y NSE a fondo</td><td>3 escaneos comentados línea por línea</td></tr>
+        <tr><td>3</td><td>Enumeración web/SMB/DNS</td><td>Mapa de servicios de Metasploitable con hipótesis</td></tr>
+        <tr><td>4</td><td>DVWA completo + Burp</td><td>Tabla de 8 vulns con mitigación escrita por ti</td></tr>
+        <tr><td>5</td><td>Metasploit y explotación guiada</td><td>1 explotación documentada con evidencia y rollback</td></tr>
+        <tr><td>6</td><td>Post-explotación y privesc Linux/Windows</td><td>Checklists de enumeración interna validadas</td></tr>
+        <tr><td>7</td><td>Pivoting y túneles</td><td>Diagrama de doble salto en tu lab con puertos</td></tr>
+        <tr><td>8–9</td><td>GOAD + BloodHound + Kerberos</td><td>Ruta a Domain Admin explicada en español simple</td></tr>
+        <tr><td>10</td><td>AD CS, ACL, delegación</td><td>Tabla técnica→detección para tu SIEM</td></tr>
+        <tr><td>11</td><td>C2 en lab + Purple Team</td><td>5 técnicas mapeadas a MITRE con su alerta</td></tr>
+        <tr><td>12</td><td>Mini-pentest completo en lab + reporte</td><td>Informe de 5–8 páginas listo para presentar</td></tr>
+      </table>
+      <div class="callout"><b>Al terminar la semana 12 debes poder:</b> 1) leer un reporte de pentest y detectar humo, 2) reproducir en lab el 70% de los hallazgos típicos, 3) exigir evidencia correcta, 4) priorizar por impacto de negocio asegurador, y 5) dirigir un ROE sin poner en riesgo la operación.</div>
+    </section>
+
+    <!-- EMPRESA -->
+    <section class="card section hidden" id="empresa">
+      <h2>Pentest en tu empresa: cómo se hace bien (siendo el CISO)</h2>
+      <p class="muted">La idea no es “hackear tu compañía un viernes”. Es ejecutar un programa de validación ofensiva con autorización escrita, alcance acotado y coordinación con negocio. Aquí está el esqueleto que usan las aseguradoras reguladas.</p>
+
+      <h3>1) Antes de tocar un teclado</h3>
+      <table class="table"><tr><th>Paso</th><th>Quién firma</th><th>Artefacto</th></tr>
+      <tr><td>Autorización y alcance</td><td>CISO + Legal + dueño del sistema</td><td>Carta de autorización (Get Out of Jail)</td></tr>
+      <tr><td>Reglas de enfrentamiento</td><td>CISO + SOC + Infra</td><td>ROE firmado (ver sección ROE)</td></tr>
+      <tr><td>Ventana y contactos</td><td>PM / Coordinador</td><td>Plan de comunicaciones 24x7</td></tr>
+      <tr><td>Seguridad operacional</td><td>Red Team lead</td><td>Qué NO se toca nunca (producción crítica, datos reales de asegurados)</td></tr></table>
+
+      <h3>2) Tipos de ejercicio (elige según madurez)</h3>
+      <table class="table"><tr><th>Tipo</th><th>Cuándo</th><th>Ejemplo para seguros</th></tr>
+      <tr><td>Pentest interno</td><td>Anual / tras cambios mayores</td><td>Desde VLAN de usuario, ¿llego al core de pólizas?</td></tr>
+      <tr><td>Pentest externo</td><td>Trimestral</td><td>Portal de asegurados y VPN desde internet</td></tr>
+      <tr><td>Pentest web / API</td><td>Por release</td><td>App móvil y API de reclamaciones</td></tr>
+      <tr><td>Red Team (objetivo)</td><td>Cuando el pentest ya es maduro</td><td>“Acceder (simulado) a la bóveda de backups” sin avisar al SOC</td></tr>
+      <tr><td>Purple Team</td><td>Continuo</td><td>Repetir TTPs y validar que el SIEM alerta</td></tr></table>
+
+      <h3>3) Qué pedirle al proveedor (o a tu equipo) para que no te vendan humo</h3>
+      <p>Exige: metodología citada (PTES/OWASP/NIST SP 800-115), CVs del equipo que realmente viene, ejemplos anonimizados de reportes, plan de manejo de datos sensibles, seguro de responsabilidad, NDA, y compromiso de retest. Un reporte que solo es salida de escáner no es un pentest.</p>
+
+      <div class="code"><button class="copy">Copiar</button><pre># Preguntas de CISO que separan un buen pentest de un escaneo caro
+1) ¿Qué probaron MANUALMENTE además del escáner?
+2) ¿Cuál fue la ruta de ataque completa, no solo hallazgos sueltos?
+3) ¿Qué NO pudieron probar y por qué? (límites del alcance)
+4) ¿Qué evidencia respalda cada crítico? (captura, log, hora)
+5) ¿Cuál es el retest y en cuánto tiempo?</pre></div>
+
+      <h3>4) Después: convertir hallazgos en remediación</h3>
+      <p>Conecta cada hallazgo a tu Cyber Remediation Portal: dueño, fecha compromiso según severidad (ej. crítico 15 días, alto 30, medio 90 — ajusta a tu política), evidencia de cierre y retest. Tu tasa de remediación (hoy 14% con 114 abiertos y 49 vencidos) es el KPI que este programa debe mover; el pentest sin cierre es teatro.</p>
+      <div class="callout warn"><b>Regla de oro en producción:</b> nada de explotación destructiva, nada de exfiltración de datos reales de asegurados, nada fuera de ventana. El objetivo se prueba con evidencia simulada y marcada. Si hay duda, se para y se llama al contacto del ROE.</div>
+    </section>
+
+    <!-- ROE -->
+    <section class="card section hidden" id="roe">
+      <h2>ROE y alcance: plantillas para copiar</h2>
+      <p class="muted">Sin papel firmado, no hay pentest: hay un incidente. Estas plantillas son tu punto de partida con Legal.</p>
+
+      <h3>Plantilla de alcance (Scope)</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>ALCANCE DEL EJERCICIO — [Nombre, ej. Pentest Interno Q1]
+Autorizado por: [CISO, nombre y firma]  Fecha:
+En alcance (IPs/rangos/URLs/APIs):
+  - 10.x.x.0/24 (VLAN usuarios, solo lab de validación / segmento acordado)
+  - portal-asegurados.ejemplo.com (ambiente de pruebas / prod con ventana)
+Fuera de alcance (NUNCA):
+  - Sistemas de pago en producción sin ventana aprobada
+  - Datos reales de asegurados (usar datos sintéticos/marcados)
+  - Terceros / proveedores sin autorización escrita de ellos
+Ventana: [fecha/hora inicio–fin, zona horaria]
+Contactos 24x7: [Red lead, SOC, Infra, CISO]</pre></div>
+
+      <h3>Reglas de enfrentamiento (ROE) — mínimo viable</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>ROE — Reglas del ejercicio
+1) Identificación: el equipo porta carta de autorización; el SOC (o white cell)
+   sabe cómo validar sin revelar al Blue si es ejercicio sorpresa.
+2) Prohibido: DoS, borrado/modificación de datos, phishing a clientes reales,
+   ingeniería social fuera de la lista aprobada de empleados (si aplica).
+3) Datos: si se accede a información sensible, se detiene, se captura evidencia
+   mínima marcada y se notifica. No se exfiltra información real.
+4) Parada de emergencia: palabra clave [___] y teléfono [___]. Al invocarla,
+   toda actividad cesa de inmediato.
+5) Evidencia: toda acción con hora (UTC-4), IP origen y hash de archivos.
+6) Limpieza: al cerrar, se retiran cuentas, shells y artefactos creados;
+   se entrega inventario de cambios para revertir.</pre></div>
+
+      <h3>Carta de autorización (Get Out of Jail) — texto base</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>Se autoriza a [nombres] de [equipo/proveedor] a realizar actividades de
+validación ofensiva únicamente sobre los activos listados en el Alcance
+adjunto, durante la ventana indicada y bajo el ROE firmado.
+Esta carta debe presentarse ante cualquier requerimiento de Seguridad,
+Legal o autoridades durante el ejercicio.
+Firmas: CISO / Legal / Dueño del sistema   Fecha:</pre></div>
+
+      <div class="callout red"><b>Para tu caso:</b> como CISO no te auto-autorizas en silencio. La autorización la co-firman Legal y el dueño del negocio dueño del activo. Eso te protege a ti y protege el ejercicio.</div>
+    </section>
+
+    <!-- ESCENARIOS -->
+    <section class="card section hidden" id="escenarios">
+      <h2>Escenarios guiados de lab (hazlos en orden)</h2>
+      <p class="muted">Cada escenario es un mini-pentest completo en tus VMs. Tiempo estimado y entregable incluidos.</p>
+
+      <div class="exercise">
+        <h4>Escenario A — De escaneo a shell en Metasploitable (90 min)</h4>
+        <p><b>Objetivo:</b> partir de solo la IP y terminar con acceso documentado. Pasos: descubrimiento → Nmap completo → elegir UN servicio con versión vulnerable → leer el módulo de Metasploit antes de usarlo → <span class="kbd">check</span> → explotación en la VM → evidencia (whoami, hostname, hora) → mitigación escrita.</p>
+        <details><summary>Checklist de cierre</summary><p>□ Escaneo guardado con -oA □ Hipótesis escrita antes de explotar □ Captura de acceso □ Qué parche/config cierra el hueco □ VM restaurada desde snapshot</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Escenario B — Web: de Gobuster al backup olvidado (60 min)</h4>
+        <p><b>Objetivo:</b> en DVWA + un directorio con backup simulado, encuentra la ruta que expone código. Pasos: WhatWeb → Gobuster con extensiones → identificar archivo .bak/.zip → revisar código → documentar la cadena de conexión como hallazgo (sin salir del lab).</p>
+        <details><summary>Qué le dices al dev</summary><p>“El backup accesible por web expone el código y las credenciales de BD. Impacto: compromiso total de la app. Corrección: fuera del webroot, denegar .bak/.zip en el servidor y rotar la credencial.”</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Escenario C — GOAD: usuario bajo a Domain Admin (2 sesiones)</h4>
+        <p><b>Objetivo:</b> con BloodHound, mapea la ruta más corta, ejecútala paso a paso en GOAD y, por cada salto, anota la detección que debería haber disparado. Entregable: diagrama de ruta + tabla técnica→alerta.</p>
+        <details><summary>Pista si te atascas</summary><p>Busca primero “Shortest Paths to Domain Admins” y trabaja hacia atrás: cada flecha es un permiso que debes validar manualmente en AD.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Escenario D — Purple: repite un TTP y valida tu SIEM (60 min)</h4>
+        <p><b>Objetivo:</b> elige una técnica (ej. enumeración SMB o Kerberoasting en GOAD), ejecútala a una hora anotada y verifica qué log/alerta generó. Si no generó ninguna, tu hallazgo es la brecha de detección: documéntala como tal.</p>
+        <details><summary>Formato del hallazgo</summary><p>Técnica MITRE: ___ · Hora exacta: ___ · Hosts: ___ · Log esperado: ___ · Log real: ___ · Brecha: ___ · Regla propuesta: ___</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Escenario E — Phishing interno autorizado: diseño ético (solo diseño)</h4>
+        <p>Sin enviar nada: diseña en papel un ejercicio de phishing para empleados (con RRHH y Legal): población aprobada, plantilla sin datos reales, página de aprendizaje al hacer clic, métricas (clic, reporte al SOC) y cómo el botón de “reportar phishing” es el KPI que quieres subir. El diseño es el ejercicio; el envío requiere su propio ROE.</p>
+      </div>
+    </section>
+
+    <!-- SETUP -->
+    <section class="card section hidden" id="setup">
+      <h2>Setup: Ollama + WhiteRabbitNeo en tu máquina</h2>
+      <p class="muted">Tu IA local es un asistente de lab, no un reemplazo de estudiar. Úsala para explicar salidas, no para copiar comandos a ciegas. Como tu equipo no es muy potente, corre el modelo pequeño y apoya el aprendizaje fuerte aquí.</p>
+
+      <h3>Ruta recomendada para hardware modesto</h3>
+      <table class="table"><tr><th>RAM</th><th>Modelo</th><th>Uso</th></tr>
+      <tr><td>8 GB</td><td>7B cuantizado (~4–5 GB)</td><td>Preguntas puntuales, explicar flags, interpretar salidas</td></tr>
+      <tr><td>16 GB</td><td>13B–14B (~9 GB)</td><td>Mejor razonamiento, sesiones más largas</td></tr>
+      <tr><td>24 GB+</td><td>32B</td><td>Salto grande en calidad (si algún día actualizas)</td></tr></table>
+
+      <h3>Instalación paso a paso</h3>
+      <div class="code"><button class="copy">Copiar</button><pre># 1) Instala Ollama desde https://ollama.com  (Mac: app | Linux: instalador)
+
+# 2) Descarga un modelo enfocado en seguridad (elige el tag según tu RAM)
+ollama pull whiterabbitneo
+
+# 3) Prueba rápida
+ollama run whiterabbitneo "Explícame qué hace nmap -sV paso a paso, como a un principiante"
+
+# 4) (Opcional) Interfaz tipo chat con Docker: Open WebUI
+# 5) (Nivel siguiente) AnythingLLM para RAG con tus notas: PTES, OWASP, MITRE ATT&CK</pre></div>
+
+      <div class="callout">
+        <b>Cómo preguntarle bien a un modelo pequeño:</b> dale contexto y pide pasos. Funciona mejor “Estoy en mi lab, nmap me dio Apache 2.4.49 en 192.168.56.101, ¿qué significa y qué investigo después?” que “hackea esto”.
+      </div>
+
+      <h3>Enfoque híbrido (el tuyo)</h3>
+      <p><b>Aquí / nube</b> para teoría y metodología (explicaciones largas, planes, troubleshooting). <b>Local sin filtros</b> para lo puntual del lab que un asistente generalista bloquearía. Esa combinación es la que usa la mayoría con hardware limitado.</p>
+      <p class="small muted">Si luego quieres probar un modelo grande sin comprar equipo, se puede rentar GPU por horas (ej. RunPod) y correr un 32B/70B temporalmente.</p>
+    </section>
+
+    <!-- METODOLOGIA -->
+    <section class="card section hidden" id="metodologia">
+      <h2>Metodología de pentest (tu mapa permanente)</h2>
+      <p class="muted">PTES + Kill Chain + MITRE ATT&CK, en lenguaje simple. Vuelve aquí cuando no sepas “qué sigue”.</p>
+      <table class="table">
+        <tr><th>Fase</th><th>Objetivo</th><th>Preguntas guía</th><th>Salida</th></tr>
+        <tr><td>1. Reconocimiento</td><td>Descubrir superficie</td><td>¿Qué hosts, dominios y servicios existen en mi lab?</td><td>Inventario</td></tr>
+        <tr><td>2. Escaneo</td><td>Puertos y versiones</td><td>¿Qué está abierto y qué versión corre?</td><td>Mapa de servicios</td></tr>
+        <tr><td>3. Enumeración</td><td>Detalles útiles</td><td>¿Usuarios, shares, rutas, tecnología?</td><td>Hipótesis de ataque</td></tr>
+        <tr><td>4. Explotación</td><td>Acceso inicial</td><td>¿Qué hipótesis se confirma en la VM vulnerable?</td><td>Shell / acceso</td></tr>
+        <tr><td>5. Post-explotación</td><td>Valor y movimiento</td><td>¿Qué puedo hacer y a qué más llego?</td><td>Rutas de pivoting</td></tr>
+        <tr><td>6. Reporte</td><td>Comunicar impacto</td><td>¿Qué se probó y cómo se corrige?</td><td>Informe accionable</td></tr>
+      </table>
+      <div class="callout warn"><b>Error clásico de principiante:</b> explotar antes de enumerar. La enumeración te ahorra horas y te evita ruido innecesario, incluso en el lab.</div>
+      <h3>Kill Chain → MITRE ATT&CK (tu traducción rápida)</h3>
+      <table class="table"><tr><th>Kill Chain</th><th>MITRE (ejemplos)</th><th>Qué miras en el lab</th></tr>
+      <tr><td>Recon</td><td>TA0043 Reconnaissance</td><td>DNS, escaneo, OSINT de práctica</td></tr>
+      <tr><td>Acceso inicial</td><td>T1190 Exploit Public-Facing App</td><td>DVWA explotado con evidencia</td></tr>
+      <tr><td>Ejecución / Persistencia</td><td>T1059, T1547</td><td>Qué se ejecuta al reiniciar la VM</td></tr>
+      <tr><td>Escalada / Credenciales</td><td>T1068, T1003</td><td>Privesc y por qué LSASS se protege</td></tr>
+      <tr><td>Movimiento lateral</td><td>T1021</td><td>SMB/RDP entre VMs del lab</td></tr>
+      <tr><td>C2 / Exfiltración</td><td>T1071</td><td>Beaconing simulado y su log</td></tr></table>
+      <h3>Checklist de sesión (copia y pega en tus notas)</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>[ ] Alcance del lab definido (IPs/VMs)
+[ ] Snapshot tomado antes de practicar
+[ ] Escaneo guardado (-oA)
+[ ] Hipótesis escrita antes de explotar
+[ ] Evidencia guardada (fecha/hora)
+[ ] Mitigación anotada por cada hallazgo
+[ ] Lab restaurado / apagado al final</pre></div>
+    </section>
+
+    <!-- LABORATORIO -->
+    <section class="card section hidden" id="laboratorio">
+      <h2>Tu laboratorio seguro (diseño recomendado)</h2>
+      <p class="muted">Un lab bueno es aburrido por fuera y peligroso solo por dentro: red aislada, snapshots y máquinas hechas para romperse.</p>
+
+      <div class="grid">
+        <div class="stat"><b>Kali Linux</b><span>Tu máquina atacante (VM)</span></div>
+        <div class="stat"><b>Metasploitable / DVWA</b><span>Víctimas de práctica</span></div>
+        <div class="stat"><b>GOAD</b><span>Dominio AD para Fase 5</span></div>
+      </div>
+
+      <h3>Red sugerida</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>Red Host-Only / Interna: 192.168.56.0/24  (sin salida a internet para víctimas)
+Kali:        192.168.56.5   (puede tener NAT aparte para actualizar)
+Víctima 1:   192.168.56.101 (Metasploitable)
+Víctima Web: 192.168.56.102 (DVWA)
+AD Lab:      red separada de GOAD según su guía</pre></div>
+
+      <h3>Reglas del lab</h3>
+      <p>1) Víctimas sin internet. 2) Snapshot antes de cada práctica. 3) Nada de escanear fuera de <span class="kbd">192.168.56.0/24</span> o la red de GOAD. 4) Documenta IP, hora y comando de cada prueba. 5) Al terminar, restaura o apaga.</p>
+
+      <div class="callout red"><b>Línea roja:</b> si una IP no está en tu lista de lab, no se toca. Esa disciplina es parte del entrenamiento Red Team.</div>
+
+      <h3>Kit inicial en Kali</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>sudo apt update
+# Herramientas que usarás en la ruta (muchas ya vienen en Kali)
+# nmap, gobuster, whatweb, enum4linux, smbclient, msfconsole, bloodhound
+which nmap gobuster whatweb msfconsole</pre></div>
+    </section>
+
+    <!-- HERRAMIENTAS -->
+    <section class="card section hidden" id="herramientas">
+      <h2>Herramientas Kali por fase</h2>
+      <p class="muted">No memorices 300 herramientas. Domina pocas y entiende qué problema resuelve cada una.</p>
+      <input type="text" id="toolSearch" placeholder="Buscar herramienta… (ej. nmap, gobuster, bloodhound)"/>
+      <table class="table" id="toolTable">
+        <tr><th>Herramienta</th><th>Fase</th><th>Para qué</th><th>Ejemplo en lab</th></tr>
+        <tr><td><b>nmap</b></td><td>Escaneo</td><td>Puertos, servicios, scripts</td><td>nmap -sV -sC 192.168.56.101</td></tr>
+        <tr><td><b>gobuster</b></td><td>Enumeración web</td><td>Descubrir rutas</td><td>gobuster dir -u http://192.168.56.102 -w common.txt</td></tr>
+        <tr><td><b>whatweb</b></td><td>Enumeración web</td><td>Fingerprint de tecnología</td><td>whatweb http://192.168.56.102</td></tr>
+        <tr><td><b>enum4linux</b></td><td>Enumeración SMB</td><td>Usuarios/shares en Windows/Samba</td><td>enum4linux -a 192.168.56.101</td></tr>
+        <tr><td><b>smbclient</b></td><td>Enumeración SMB</td><td>Listar recursos compartidos</td><td>smbclient -L //192.168.56.101 -N</td></tr>
+        <tr><td><b>msfconsole</b></td><td>Explotación</td><td>Framework de exploits (lab)</td><td>search + use + set RHOSTS (solo VM)</td></tr>
+        <tr><td><b>bloodhound</b></td><td>AD</td><td>Grafo de relaciones y privilegios</td><td>Analizar ruta a Domain Admin en GOAD</td></tr>
+        <tr><td><b>wireshark</b></td><td>Análisis</td><td>Ver tráfico y entender protocolos</td><td>Capturar tu propio escaneo en el lab</td></tr>
+        <tr><td><b>burp suite</b></td><td>Web</td><td>Proxy, Repeater, Intruder</td><td>Interceptar login en DVWA y repetir en Repeater</td></tr>
+        <tr><td><b>ffuf</b></td><td>Enumeración web</td><td>Fuzzing de rutas/parámetros/vhosts</td><td>ffuf -u http://192.168.56.102/FUZZ -w common.txt</td></tr>
+        <tr><td><b>nikto</b></td><td>Web</td><td>Chequeos web conocidos (ruidoso)</td><td>nikto -h http://192.168.56.102 (solo lab)</td></tr>
+        <tr><td><b>hydra / medusa</b></td><td>Autenticación</td><td>Fuerza bruta controlada en lab</td><td>Solo contra tu DVWA, rate bajo y cuenta de práctica</td></tr>
+        <tr><td><b>john / hashcat</b></td><td>Contraseñas</td><td>Crackeo offline de hashes de práctica</td><td>john --wordlist=rockyou.txt hash_lab.txt</td></tr>
+        <tr><td><b>responder</b></td><td>AD / Red</td><td>Envenenamiento LLMNR/NBT-NS en lab (concepto)</td><td>Estudiar detección: deshabilitar LLMNR por GPO</td></tr>
+        <tr><td><b>mimikatz (concepto)</b></td><td>AD</td><td>Por qué LSASS debe protegerse</td><td>Se estudia su detección, Credential Guard y LSA PPL</td></tr>
+        <tr><td><b>chisel / ligolo-ng</b></td><td>Pivoting</td><td>Túneles y pivot entre redes del lab</td><td>Documentar cada salto en el diagrama</td></tr>
+        <tr><td><b>nessus / openvas</b></td><td>Vulnerabilidades</td><td>Escaneo autenticado y gestión de vulns</td><td>Comparar escaneo vs explotación manual</td></tr>
+        <tr><td><b>nuclei</b></td><td>Web/Red</td><td>Plantillas de chequeos rápidos</td><td>nuclei -u http://192.168.56.102 (lab)</td></tr>
+      </table>
+      <p class="small muted">Tip: filtra con el buscador. En clase iremos herramienta por herramienta con salidas reales de tu lab.</p>
+    </section>
+
+    <!-- EJERCICIOS -->
+    <section class="card section hidden" id="ejercicios">
+      <h2>Ejercicios y comprobación</h2>
+      <p class="muted">Hazlos en orden. Si fallas, vuelve a la lección indicada: así se aprende.</p>
+
+      <div class="exercise">
+        <h4>Ejercicio 1 — Lee un escaneo (Fase 2)</h4>
+        <p>Te doy una salida simulada de lab: <span class="kbd">22/tcp open ssh OpenSSH 8.9</span>, <span class="kbd">80/tcp open http Apache 2.4.49</span>, <span class="kbd">445/tcp open microsoft-ds</span>. ¿Qué enumeras primero y por qué?</p>
+        <details><summary>Ver pista y solución</summary><p>No hay una única respuesta, pero un orden sólido es: web (WhatWeb/Gobuster) por la versión vieja de Apache, SMB (enum4linux) por shares/usuarios, y SSH al final (suele requerir credenciales). Lo importante es justificar con la versión y el servicio, no adivinar.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 2 — Linux rápido (Fase 1)</h4>
+        <p>En tu Kali crea una carpeta <span class="kbd">lab1</span> con 3 archivos y encuentra cuál contiene la palabra “secreto” sin abrirlos uno por uno.</p>
+        <div class="code"><button class="copy">Copiar</button><pre>mkdir -p ~/lab1 && cd ~/lab1
+echo "hola" > a.txt; echo "secreto de lab" > b.txt; echo "nada" > c.txt
+grep -R "secreto" .</pre></div>
+        <details><summary>¿Qué debiste ver?</summary><p><span class="kbd">./b.txt:secreto de lab</span>. Si lo viste, ya usas búsqueda recursiva como en post-explotación.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 3 — Metodología (transversal)</h4>
+        <p>Ordena: Explotación, Reconocimiento, Reporte, Enumeración, Escaneo, Post-explotación.</p>
+        <details><summary>Ver orden correcto</summary><p>Reconocimiento → Escaneo → Enumeración → Explotación → Post-explotación → Reporte. Si explotaste antes de enumerar, anota qué te faltó saber.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 4 — Lee una petición en Burp (Fases 2–3)</h4>
+        <p>En DVWA, intercepta un login de práctica. Identifica: método, URL, cookies, parámetros y dónde viajaría una credencial. Luego reenvía en Repeater cambiando solo la contraseña.</p>
+        <details><summary>¿Qué debes concluir?</summary><p>Si viaja por HTTP sin TLS y sin token anti-CSRF, tienes dos hallazgos ya documentados antes de “hackear” nada.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 5 — Severidad con contexto (CISO)</h4>
+        <p>Un escáner marca “crítico” un XSS en una página de práctica sin datos, y “medio” un share SMB con carpetas de reclamaciones legible por todos. ¿Cuál priorizas y por qué?</p>
+        <details><summary>Respuesta esperada</summary><p>El SMB: severidad real = impacto de negocio × explotabilidad. El escáner no conoce tu negocio; tú sí. Esa es la conversación que debes poder dar en comité.</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 6 — Escribe el hallazgo perfecto</h4>
+        <p>Con un hallazgo de tu lab, llena: Título · CVSS y justificación · Evidencia (hora/captura) · Ruta · Impacto para una aseguradora · Mitigación · Dueño · Fecha de retest. Si te falta un campo, te falta evidencia.</p>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 7 — Evidencia de auditoría (CISA Dominio 1)</h4>
+        <p>Auditas el proceso de bajas de cuentas en tu aseguradora. ¿Cuál de estas es la evidencia <b>más confiable</b> de que las cuentas de empleados salientes se desactivan a tiempo? a) La entrevista con el administrador, que asegura que lo hace el mismo día. b) El procedimiento escrito en la política de acceso. c) Tu propia reejecución: tomas la lista de salidas de RRHH de 3 meses y verificas, cuenta por cuenta, la fecha de desactivación en el sistema.</p>
+        <details><summary>Ver respuesta</summary><p>La <b>c</b>: la reejecución hecha por el auditor sobre datos completos es evidencia directa y confiable. La entrevista (a) es lo más débil hasta corroborarla; el procedimiento (b) prueba que el control está <i>diseñado</i>, no que <i>opera</i>. Esa distinción — diseño vs. efectividad operativa — es la pregunta favorita del CISA. (Lección CISA 1)</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 8 — Actúa como gerente (CISSP Dominio 1)</h4>
+        <p>El ALE por ransomware sobre tu core de pólizas es $60,000/año. Un control cuesta $90,000/año y baja el ALE a $10,000. Un gerente técnico lo compraría sin pensar. ¿Qué hace un CISO con mentalidad CISSP?</p>
+        <details><summary>Respuesta esperada</summary><p>No lo compra con esos números: el control ahorra $50,000 de ALE pero cuesta $90,000. La salida profesional es documentar la decisión: buscar un control más barato, transferir parte del riesgo (seguro cibernético) o aceptar el riesgo con firma de la dirección si está dentro del apetito. El examen premia justificar con riesgo y negocio, no “más seguridad siempre”. (Lección CISSP 1)</p></details>
+      </div>
+
+      <h3>Quiz rápido (toca una opción)</h3>
+      <div id="quiz"></div>
+    </section>
+
+    <!-- CHECKLISTS -->
+    <section class="card section hidden" id="checklists">
+      <h2>Checklists profesionales (copia y usa)</h2>
+      <p class="muted">Lo que un pentester senior revisa antes, durante y después. Úsalas en el lab hasta que sean hábito y luego en el ejercicio real autorizado.</p>
+
+      <h3>Antes de escanear</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>[ ] Alcance y ROE firmados y a la mano
+[ ] Ventana confirmada y contactos 24x7 probados
+[ ] IPs validadas (¿son las del alcance, no parecidas?)
+[ ] Snapshot / respaldo verificado del objetivo de lab
+[ ] Carpeta de evidencia creada con fecha
+[ ] Hora sincronizada (anota zona horaria en todo)</pre></div>
+
+      <h3>Enumeración que no puede faltar</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>Web:  tecnología, rutas, extensiones, headers, TLS, errores verbosos
+SMB:  shares, permisos por share, usuarios, política de contraseñas
+DNS:  transferencias, subdominios del lab, registros TXT
+AD:   usuarios, grupos, SPN, GPO, ACLs, LAPS, delegación, AD CS
+Nube: (si aplica) buckets públicos, metadata, claves en repos — solo alcance</pre></div>
+
+      <h3>Antes de entregar el reporte</h3>
+      <div class="code"><button class="copy">Copiar</button><pre>[ ] Cada hallazgo: evidencia + impacto de negocio + mitigación + dueño
+[ ] Ruta de ataque como historia (no lista suelta de CVEs)
+[ ] Severidad justificada (CVSS + contexto de la empresa)
+[ ] Lo NO probado declarado explícitamente
+[ ] Plan de retest con fechas
+[ ] Artefactos de limpieza verificados (cuentas/shells retirados)</pre></div>
+
+      <h3>Kit de bolsillo del CISO en una reunión de pentest</h3>
+      <table class="table"><tr><th>Si dicen…</th><th>Tú preguntas…</th></tr>
+      <tr><td>“Todo salió bien”</td><td>¿Cuál fue la ruta más larga que intentaron y qué los detuvo?</td></tr>
+      <tr><td>“Crítico por el escáner”</td><td>¿Lo explotaron manualmente? ¿Evidencia?</td></tr>
+      <tr><td>“No encontramos nada en AD”</td><td>¿Corrieron BloodHound? ¿Qué consultas y qué devolvió?</td></tr>
+      <tr><td>“Cerramos el hallazgo”</td><td>¿Retest con evidencia o solo parche aplicado?</td></tr></table>
+    </section>
+
+    <!-- GLOSARIO -->
+    <section class="card section hidden" id="glosario">
+      <h2>Glosario rápido</h2>
+      <p class="muted">Definiciones cortas, en español simple. Busca mientras practicas.</p>
+      <input type="text" id="glossSearch" placeholder="Buscar término… (ej. Kerberos, pivoting, C2)"/>
+      <div id="glossList" style="margin-top:12px;display:grid;gap:10px"></div>
+    </section>
+
+    <!-- NOTAS -->
+    <section class="card section hidden" id="notas">
+      <h2>Diario de laboratorio</h2>
+      <p class="muted">Escribe aquí tus hallazgos de cada sesión: fecha, IP del lab, comando, salida y qué aprendiste. Al final puedes descargar el texto para guardarlo donde quieras.</p>
+      <textarea id="notes" placeholder="Ej.: 2026-10-15 — Lab 192.168.56.101 — nmap -sV reveló Apache 2.4.49. Hipótesis: … Resultado: … Mitigación: …"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn primary" id="downloadNotes">Descargar notas (.txt)</button>
+        <button class="btn" id="clearNotes">Limpiar</button>
+      </div>
+      <div class="callout" style="margin-top:12px"><b>Plantilla por hallazgo:</b> Objetivo (IP de lab) · Puerto/servicio · Evidencia · Impacto · Mitigación · Siguiente paso. Úsala siempre y tu reporte de Fase 6 saldrá casi solo.</div>
+    </section>
+
+    <div class="footer">Centro de aprendizaje: Pentest, CISSP y CISA — la práctica ofensiva, solo en laboratorio aislado. Trae tus salidas y seguimos en clase.</div>
+  </main>
+</div>
+
+<script>
+const sections=[...document.querySelectorAll('.section')];
+const navBtns=[...document.querySelectorAll('#nav button')];
+function show(id){
+  sections.forEach(s=>s.classList.toggle('hidden',s.id!==id));
+  navBtns.forEach(b=>b.classList.toggle('active',b.dataset.target===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+navBtns.forEach(b=>b.addEventListener('click',()=>show(b.dataset.target)));
+document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.jump)));
+
+// Copiar código
+document.querySelectorAll('.code').forEach(block=>{
+  const btn=block.querySelector('.copy');
+  const pre=block.querySelector('pre');
+  if(!btn||!pre) return;
+  btn.addEventListener('click',async()=>{
+    try{ await navigator.clipboard.writeText(pre.innerText); btn.textContent='Copiado'; setTimeout(()=>btn.textContent='Copiar',1200);}catch(e){ btn.textContent='Selecciona el texto'; setTimeout(()=>btn.textContent='Copiar',1200);}
+  });
+});
+
+// Progreso en memoria (solo esta pestaña)
+const done=new Set();
+const total=document.querySelectorAll('[data-lesson]').length;
+function nextLesson(){
+  return [...document.querySelectorAll('[data-lesson]')].find(el=>!done.has(el.dataset.lesson))||null;
+}
+function refreshProgress(){
+  const pct= total? Math.round(done.size/total*100):0;
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('doneCount').textContent=done.size;
+  document.querySelectorAll('[data-lesson]').forEach(el=>{
+    const id=el.dataset.lesson;
+    const btn=el.querySelector('.mark');
+    if(!btn) return;
+    const isDone=done.has(id);
+    btn.textContent=isDone?'Completada':'Marcar completada';
+    btn.classList.toggle('done',isDone);
+  });
+  const next=nextLesson();
+  const hint=document.getElementById('posHint');
+  const step=document.getElementById('nextStep');
+  if(next){
+    const title=(next.querySelector('h4')?.textContent||'la siguiente lección').trim();
+    if(hint) hint.innerHTML='Estás aquí: <b>'+done.size+' de '+total+' lecciones</b>. Siguiente: '+title;
+    if(step) step.textContent='Vas en la lección '+(done.size+1)+' de '+total+': '+title+'. El botón te lleva directo.';
+  }else{
+    if(hint) hint.innerHTML='Estás aquí: <b>ruta completa</b>. Repasa con el quiz y los escenarios.';
+    if(step) step.textContent='Ya marcaste todas las lecciones. Toca repasar: quiz, escenarios y checklists.';
+  }
+}
+document.getElementById('continueBtn')?.addEventListener('click',()=>{
+  const next=nextLesson();
+  if(!next){ show('ejercicios'); return; }
+  const sec=next.closest('.section');
+  if(sec) show(sec.id);
+  setTimeout(()=>{
+    next.scrollIntoView({behavior:'smooth',block:'center'});
+    next.classList.add('hl');
+    setTimeout(()=>next.classList.remove('hl'),2400);
+  },60);
+});
+document.querySelectorAll('.mark').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const lesson=btn.closest('[data-lesson]');
+    if(!lesson) return;
+    const id=lesson.dataset.lesson;
+    done.has(id)?done.delete(id):done.add(id);
+    refreshProgress();
+  });
+});
+refreshProgress();
+
+// Buscador herramientas
+const toolSearch=document.getElementById('toolSearch');
+if(toolSearch){
+  toolSearch.addEventListener('input',()=>{
+    const q=toolSearch.value.toLowerCase();
+    document.querySelectorAll('#toolTable tr').forEach((tr,i)=>{
+      if(i===0) return;
+      tr.style.display=tr.innerText.toLowerCase().includes(q)?'':'none';
+    });
+  });
+}
+
+// Glosario
+const gloss=[
+  ['Reconocimiento','Descubrir qué existe: hosts, dominios, servicios. Puede ser pasivo (sin tocar) o activo (interactuando).'],
+  ['Enumeración','Sacar detalle útil: usuarios, shares, rutas web, versiones exactas. Es donde nacen las hipótesis.'],
+  ['Explotación','Confirmar una vulnerabilidad en la VM del lab para obtener acceso. Siempre con hipótesis previa.'],
+  ['Post-explotación','Qué puedes hacer ya dentro: enumerar, estabilizar, buscar rutas y evidencia.'],
+  ['Pivoting','Usar una máquina comprometida del lab como puente hacia otra red interna.'],
+  ['Kerberos','Sistema de tickets de Active Directory. Si un ticket es débil, puede atacarse offline en el lab.'],
+  ['BloodHound','Herramienta que dibuja relaciones en AD para encontrar rutas a privilegios altos.'],
+  ['C2 (Command & Control)','Canal de control de agentes en un ejercicio Red Team. Se estudia en lab con logs abiertos.'],
+  ['GOAD','Laboratorio de Active Directory vulnerable para practicar AD de forma segura.'],
+  ['DVWA','Aplicación web intencionalmente vulnerable para aprender XSS, SQLi, upload y más.'],
+  ['OPSEC','Cuidado operacional: qué ruido dejas y qué puede detectar el defensor.'],
+  ['Payload','Código que se ejecuta tras explotar una vuln en el lab. Se estudia solo contra tus VMs.'],
+  ['ROE (Rules of Engagement)','Reglas firmadas del ejercicio: qué se puede, qué no, contactos y parada de emergencia. Sin ROE no hay pentest profesional.'],
+  ['Alcance (Scope)','Lista exacta de activos autorizados y excluidos. Fuera del alcance no se toca, aunque se pueda.'],
+  ['White Cell','Equipo que coordina el ejercicio y valida la autorización sin revelar de más al Blue Team.'],
+  ['Purple Team','Ejercicio colaborativo Red+Blue: se ejecuta un TTP y se valida la detección en vivo.'],
+  ['MITRE ATT&CK','Catálogo de tácticas y técnicas de adversarios. Sirve para mapear cobertura de detección.'],
+  ['CVSS','Sistema de puntuación de severidad (0–10). Se ajusta con el contexto de negocio.'],
+  ['DCSync','Abuso del derecho de replicación en AD para obtener hashes. Se detecta por eventos de replicación anómalos.'],
+  ['AD CS','Servicios de certificados de AD. Una plantilla mal configurada puede dar privilegios altos.'],
+  ['Pass-the-Hash','Reutilizar un hash NTLM sin conocer la contraseña. Mitigación: segmentación, LAPS y Credential Guard.'],
+  ['LAPS','Solución que rota contraseñas locales de administrador para que no se reutilicen.'],
+  ['Retest','Re-prueba tras la corrección para validar con evidencia que el hallazgo cerró.'],
+  ['Get Out of Jail Letter','Carta de autorización que el equipo porta durante el ejercicio autorizado.'],
+  ['Superficie de ataque','Todo lo expuesto y alcanzable: IPs, web, APIs, nube, personas y proveedores.'],
+  ['ALE (pérdida anual esperada)','SLE × ARO: cuánto pierdes al año por un riesgo. La cifra que justifica (o no) comprar un control. (CISSP D1)'],
+  ['BIA','Análisis de impacto al negocio. Define MTD, RTO y RPO, y de ahí nacen el BCP y el DRP. (CISSP D1)'],
+  ['RTO / RPO','RTO: tiempo máximo tolerable para restaurar un servicio. RPO: cuántos datos puedes perder, medido en tiempo hacia atrás. (CISSP D1/D7)'],
+  ['Bell-LaPadula','Modelo de confidencialidad: no leer hacia arriba, no escribir hacia abajo. Su contraparte de integridad es Biba. (CISSP D3)'],
+  ['SOC 2 Tipo II','Informe que evalúa la efectividad operativa de los controles durante un período; el Tipo I solo evalúa el diseño en un momento. (CISSP D6)'],
+  ['Orden de volatilidad','Orden para recolectar evidencia según qué se borra primero: registros y caché, RAM, conexiones de red, disco. (CISSP D7)'],
+  ['Auditoría basada en riesgo','Enfoque que decide qué auditar según el riesgo evaluado del área, no por costumbre ni por turno. Es el corazón del Dominio 1 del CISA. (CISA D1)'],
+  ['Evidencia de auditoría','Información que sustenta una conclusión. Debe ser suficiente, confiable, relevante y útil; la más confiable la obtiene el propio auditor de fuentes independientes. (CISA D1)'],
+  ['Materialidad','Umbral a partir del cual una desviación o error importa para la conclusión de la auditoría. Define cuánto muestreo y detalle hacen falta. (CISA D1)'],
+  ['CAAT','Técnicas de auditoría asistidas por computadora: datos de prueba, simulación paralela o análisis de datos completos en vez de muestras pequeñas. (CISA D1)'],
+  ['Gobierno de TI','Sistema por el cual la junta y la alta dirección dirigen y controlan la TI para que apoye al negocio. Gobernar no es lo mismo que gestionar. (CISA D2)'],
+  ['COBIT','Marco de ISACA para gobierno y gestión de TI empresarial; referencia frecuente de criterios de auditoría. (CISA D2)'],
+  ['Revisión post-implementación','Evaluación posterior a la salida en producción: compara beneficios y controles reales contra el caso de negocio aprobado. (CISA D3)'],
+  ['Pruebas del plan de continuidad','Formas de probar un BCP/DRP: revisión de escritorio, simulación, operación en paralelo e interrupción total, de menor a mayor realismo y riesgo. (CISA D4)'],
+  ['Diseño vs. efectividad operativa','Un control puede estar bien diseñado y aun así no operarse en la práctica. El auditor evalúa ambas cosas por separado. (CISA D1/D5)']
+];
+const glossList=document.getElementById('glossList');
+function renderGloss(q=''){
+  if(!glossList) return;
+  glossList.innerHTML=gloss.filter(([t,d])=>(t+' '+d).toLowerCase().includes(q.toLowerCase())).map(([t,d])=>`<div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)"><b>${t}</b><div class="muted" style="margin-top:4px">${d}</div></div>`).join('') || '<p class="muted">Sin resultados. Prueba con “Kerberos” o “pivoting”.</p>';
+}
+renderGloss();
+const glossSearch=document.getElementById('glossSearch');
+if(glossSearch) glossSearch.addEventListener('input',()=>renderGloss(glossSearch.value));
+
+// Quiz
+const quizData=[
+  {q:'Si ping falla pero el puerto 80 responde, ¿qué concluyes?',opts:['El host está apagado','Puede bloquear ICMP y el servicio web vive','La red está caída'],a:1,why:'Por eso se escanea por puertos, no solo con ping. (Fase 1.2 / 2.1)'},
+  {q:'¿Qué hace nmap -sV?',opts:['Oculta el escaneo','Detecta versiones de servicios','Borra logs'],a:1,why:'-sV intenta identificar la versión exacta del servicio. (Fase 2.1)'},
+  {q:'Antes de explotar, ¿qué paso te ahorra más tiempo?',opts:['Enumerar a fondo','Probar exploits al azar','Reiniciar la VM'],a:0,why:'La enumeración crea hipótesis. Sin ella, adivinas. (Metodología)'},
+  {q:'¿Dónde practicas Kerberoasting en esta ruta?',opts:['En cualquier empresa','En GOAD, tu AD de laboratorio','En internet público'],a:1,why:'Solo en tu dominio de práctica. (Fase 5)'},
+  {q:'Sin ROE firmado, un pentest en producción es…',opts:['Normal si eres el CISO','Un incidente sin autorización formal','Más rápido'],a:1,why:'El ROE y la co-firma de Legal/dueño del activo lo hacen profesional. (ROE)'},
+  {q:'Un escáner marca CVSS 9.8 sin explotarlo. Como CISO pides…',opts:['Cerrarlo ya','Evidencia de explotación y contexto de negocio','Ignorarlo'],a:1,why:'Severidad sin evidencia es hipótesis. (Checklists)'},
+  {q:'La métrica de que el pentest sirvió es…',opts:['Cantidad de hallazgos','Tasa de remediación con retest en fecha','El PDF más largo'],a:1,why:'Hallazgo sin cierre no mueve el riesgo. Conecta a tu portal. (Empresa)'},
+  {q:'En BloodHound, Shortest Paths to Domain Admins sirve para…',opts:['Decorar el reporte','Priorizar qué permiso corregir primero','Sustituir el escaneo'],a:1,why:'Es la ruta que explicas en español simple al directorio. (Fase 5.4)'},
+  {q:'Activo de $500,000, factor de exposición 30% y ARO de 0.4. ¿SLE y ALE correctos?',opts:['$50,000 / $20,000','$150,000 / $60,000','$15,000 / $6,000'],a:1,why:'SLE = AV × EF = $150,000. ALE = SLE × ARO = $60,000. (CISSP D1)'},
+  {q:'El modelo Bell-LaPadula protege sobre todo…',opts:['La integridad de los datos','La confidencialidad: ni leer hacia arriba ni escribir hacia abajo','La disponibilidad del sistema'],a:1,why:'Bell-LaPadula es confidencialidad; Biba es su contraparte de integridad. (CISSP D3)'},
+  {q:'¿Qué diferencia un informe SOC 2 Tipo II de uno Tipo I?',opts:['El Tipo II evalúa la efectividad operativa durante un período','El Tipo I cubre más controles','No hay diferencia real'],a:0,why:'Tipo I: diseño en un momento. Tipo II: operación efectiva en el tiempo. (CISSP D6)'},
+  {q:'¿Cuál es la puntuación mínima para aprobar el examen CISA?',opts:['450 en la escala de 200 a 800','70% de respuestas correctas','700 de 1000'],a:0,why:'ISACA usa puntuación escalada de 200 a 800 y el mínimo es 450. No es un porcentaje. (CISA)'},
+  {q:'La evidencia de auditoría más confiable es la que…',opts:['Entrega el auditado en una presentación','Obtiene el propio auditor de una fuente independiente, por ejemplo reejecutando el control','Aparece en la política escrita'],a:1,why:'Entrevistas y documentos del auditado son lo más débil hasta corroborarlos; la reejecución directa es lo más fuerte. (CISA D1)'},
+  {q:'Una auditoría basada en riesgo decide qué auditar según…',opts:['El orden alfabético de los sistemas','La evaluación del riesgo: a mayor riesgo, mayor prioridad y profundidad','Lo que pide el auditado'],a:1,why:'Primero se entiende el riesgo (inherente, de control, de detección) y de ahí nace el plan de auditoría. (CISA D1)'},
+  {q:'¿Quién tiene la responsabilidad última del gobierno de TI?',opts:['El auditor de sistemas','El CIO a solas','La junta directiva y la alta dirección'],a:2,why:'Gobernar es de la junta y la alta dirección; la gerencia ejecuta y el auditor evalúa de forma independiente. (CISA D2)'},
+  {q:'Un respaldo nunca probado con una restauración real es, para el auditor…',opts:['Un control efectivo','Un control cuyo diseño existe pero cuya efectividad operativa no está demostrada','Un hallazgo cerrado'],a:1,why:'Sin evidencia de restauraciones de prueba no se puede concluir que el control opera. (CISA D4)'}
+];
+const quizEl=document.getElementById('quiz');
+if(quizEl){
+  quizEl.innerHTML=quizData.map((item,i)=>`<div class="exercise" data-quiz="${i}"><h4>${i+1}. ${item.q}</h4>${item.opts.map((o,j)=>`<button class="btn quiz-opt" data-i="${i}" data-j="${j}">${o}</button>`).join('')}<p class="small muted feedback"></p></div>`).join('');
+  quizEl.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const i=+btn.dataset.i, j=+btn.dataset.j;
+      const wrap=btn.closest('[data-quiz]');
+      wrap.querySelectorAll('.quiz-opt').forEach(b=>b.classList.remove('correct','wrong'));
+      const ok=j===quizData[i].a;
+      btn.classList.add(ok?'correct':'wrong');
+      const fb=wrap.querySelector('.feedback');
+      fb.textContent=(ok?'Correcto. ':'No exactamente. ')+quizData[i].why;
+    });
+  });
+}
+
+// Notas: descargar
+const notes=document.getElementById('notes');
+document.getElementById('downloadNotes')?.addEventListener('click',()=>{
+  const text=(notes?.value||'').trim()||'Diario de laboratorio Red Team\n\n(Sin notas todavía)';
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='diario-red-team.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById('clearNotes')?.addEventListener('click',()=>{ if(notes) notes.value=''; });
+</script>
+</body>
+</html>
