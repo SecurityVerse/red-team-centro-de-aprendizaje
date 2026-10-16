@@ -116,6 +116,8 @@ textarea{min-height:140px;resize:vertical}
     <nav class="nav" id="nav">
       <button data-target="inicio" class="active">Inicio <small>hoy</small></button>
       <button data-target="ruta">Ruta por fases <small>6 fases</small></button>
+      <button data-target="cissp">CISSP <small>8 dominios</small></button>
+      <button data-target="cisco">Cisco CCNA <small>200-301</small></button>
       <button data-target="plan12">Plan 12 semanas <small>CISO</small></button>
       <button data-target="empresa">Pentest empresa <small>autorizado</small></button>
       <button data-target="roe">ROE y alcance <small>plantillas</small></button>
@@ -141,11 +143,11 @@ textarea{min-height:140px;resize:vertical}
     <!-- INICIO -->
     <section class="card section" id="inicio">
       <h2>Empezamos desde cero, pero con dirección de Red Team.</h2>
-      <p class="muted">No vas a “aprender comandos sueltos”. Vas a aprender a pensar como atacante dentro de <b>tu propio laboratorio</b> y, cuando toque, a dirigir un pentest profesional y autorizado en tu empresa como CISO. Identificar, enumerar, explotar, moverte, documentar, reportar y corregir. Esta página es tu pizarra: yo te explico, tú practicas, luego lo revisamos juntos.</p>
+      <p class="muted">No vas a “aprender comandos sueltos”. Vas a aprender a pensar como atacante dentro de <b>tu propio laboratorio</b> y, cuando toque, a dirigir un pentest profesional y autorizado en tu empresa como CISO. Y ahora el mismo centro cubre tus otras dos metas: el <b>CISSP</b> (los 8 dominios, con mentalidad de gerente) y tu examen de <b>Cisco (CCNA 200-301)</b>. Identificar, enumerar, explotar, moverte, documentar, reportar y corregir. Esta página es tu pizarra: yo te explico, tú practicas, luego lo revisamos juntos.</p>
       <div class="grid" style="margin-top:12px">
-        <div class="stat"><b>6 fases + 4 módulos pro</b><span>Ruta completa CISO</span></div>
-        <div class="stat"><b>45+</b><span>Lecciones y ejemplos copiables</span></div>
-        <div class="stat"><b>30+</b><span>Ejercicios, escenarios y checklists</span></div>
+        <div class="stat"><b>3 rutas integradas</b><span>Pentest · CISSP · Cisco CCNA</span></div>
+        <div class="stat"><b>48+</b><span>Lecciones y ejemplos copiables</span></div>
+        <div class="stat"><b>35+</b><span>Ejercicios, escenarios y checklists</span></div>
       </div>
       <div class="callout warn"><b>Tu rol como CISO cambia el juego:</b> no necesitas ser el que más exploits memoriza; necesitas entender la ruta de ataque completa, hacer las preguntas correctas, validar evidencia, priorizar riesgo de negocio y convertir hallazgos en decisiones de directorio. Por eso este centro ahora mezcla manos en Kali con gobierno, alcance, ROE y reporte ejecutivo.</div>
       <div class="callout">
@@ -154,10 +156,23 @@ textarea{min-height:140px;resize:vertical}
       <h3>Cómo usar este centro</h3>
       <p>1) Lee una lección. 2) Copia el comando en tu Kali del lab. 3) Observa la salida. 4) Haz el ejercicio. 5) Marca la lección como completada. Cuando algo no te salga, me traes la salida y lo depuramos.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-        <button class="btn primary" data-jump="ruta">Ver la ruta completa</button>
+        <button class="btn primary" data-jump="ruta">Ver la ruta de pentest</button>
+        <button class="btn" data-jump="cissp">Estudiar CISSP</button>
+        <button class="btn" data-jump="cisco">Ir a Cisco CCNA</button>
         <button class="btn" data-jump="setup">Configurar IA local</button>
         <button class="btn" data-jump="laboratorio">Armar mi lab</button>
       </div>
+
+      <h3>Tres metas, un mismo cerebro</h3>
+      <p class="muted">Las tres rutas se refuerzan entre sí. CISSP te da el marco de gerente, Cisco te da la red por dentro y el pentest te da la evidencia. Esta tabla es tu mapa de refuerzo cruzado:</p>
+      <table class="table">
+        <tr><th>Tema</th><th>CISSP</th><th>Cisco CCNA</th><th>Pentest (este centro)</th></tr>
+        <tr><td>Redes y segmentación</td><td>Dominio 4</td><td>Fundamentos, acceso y routing</td><td>Fases 1–2</td></tr>
+        <tr><td>Identidad y acceso</td><td>Dominio 5</td><td>Seguridad (AAA, ACL)</td><td>Fase 5 (Active Directory)</td></tr>
+        <tr><td>Criptografía</td><td>Dominio 3</td><td>VPN y seguridad</td><td>Fase 3 (hashes, TLS)</td></tr>
+        <tr><td>Evaluación de seguridad</td><td>Dominio 6</td><td>—</td><td>Módulos Empresa, ROE y Escenarios</td></tr>
+        <tr><td>Operaciones e incidentes</td><td>Dominio 7</td><td>Servicios (syslog, NTP)</td><td>Fase 6 (Purple Team)</td></tr>
+      </table>
 
       <h3>Orden mental de un pentest (lo que vas a repetir siempre)</h3>
       <div class="code"><button class="copy">Copiar</button><pre>Reconocimiento → Escaneo → Enumeración → Explotación → Post-explotación → Pivoting → Reporte
@@ -575,10 +590,280 @@ bloodhound-python -d lab.local -u usuario -p 'PassLab!' -ns 192.168.56.10 -c All
       </article>
     </section>
 
+    <!-- CISSP -->
+    <section class="card section hidden" id="cissp">
+      <h2>CISSP: los 8 dominios, estudiados como CISO</h2>
+      <p class="muted">El CISSP (ISC2) no es un examen de comandos: es un examen de criterio. Certifica que puedes gobernar un programa de seguridad completo. Tú ya vives gran parte de esto como CISO; esta ruta convierte tu experiencia en respuestas correctas el día del examen.</p>
+
+      <h3>El examen, sin humo</h3>
+      <table class="table">
+        <tr><th>Dato</th><th>Detalle</th></tr>
+        <tr><td>Formato</td><td>CAT adaptativo en computadora: entre 100 y 150 preguntas, hasta 3 horas. No puedes volver atrás.</td></tr>
+        <tr><td>Para aprobar</td><td>700 de 1000 puntos (escala ponderada, no es un 70% simple)</td></tr>
+        <tr><td>Experiencia requerida</td><td>5 años pagados en 2 o más dominios. Un grado universitario de 4 años o una certificación aprobada de la lista de ISC2 descuenta 1 año. Sin la experiencia, puedes aprobar y quedar como Associate of ISC2 mientras la completas.</td></tr>
+        <tr><td>Después</td><td>Endoso de otro CISSP, 120 CPE en ciclos de 3 años y cuota anual de mantenimiento.</td></tr>
+        <tr><td>Pregunta por dominio</td><td>D1 16% · D3 13% · D4 13% · D5 13% · D7 13% · D6 12% · D2 10% · D8 10% (pesos oficiales aproximados)</td></tr>
+      </table>
+
+      <div class="callout warn"><b>La regla que más puntos salva: piensa como gerente, no como técnico.</b> Si una opción dice “instala el firewall” y otra “evalúa el riesgo y define la política”, la segunda suele ser la respuesta CISSP. El examen pregunta qué debe hacerse primero, qué protege el negocio y quién es responsable. La respuesta técnica es el paso 2; la de gestión es el paso 1.</div>
+
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">C</div><div><h3>Los 8 dominios, uno por uno</h3><p>Marca cada dominio como completado cuando puedas explicarlo en voz alta sin mirar. Ese es el estándar de examen.</p></div></div>
+
+        <div class="lesson" data-lesson="c1l1">
+          <div class="lesson-top"><h4>Dominio 1 — Seguridad y gestión de riesgos (16%)</h4><span class="tag green">El más pesado</span></div>
+          <p><b>Conceptos clave:</b> tríada CIA (+ autenticidad y no repudio), gobernanza y alineación con el negocio, jerarquía documental (política → estándar → línea base → procedimiento → guía), gestión de riesgos cualitativa (matriz) vs. cuantitativa, respuestas al riesgo (evitar, mitigar, transferir, aceptar — lo firma la dirección, no seguridad sola), BIA con MTD, RTO, RPO y WRT, planes BCP/DRP/COOP, marco legal (penal, civil, administrativo; propiedad intelectual; privacidad), código de ética de ISC2, <i>due care</i> vs. <i>due diligence</i>.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># El cálculo que el examen ama (anótalo en tu diario)
+SLE = AV × EF        (valor del activo × factor de exposición)
+ALE = SLE × ARO      (pérdida por evento × veces por año)
+
+Ejemplo: servidor core de pólizas AV = $1,000,000, EF = 30%, ARO = 0.2
+SLE = $300,000   ALE = $60,000/año
+Un control de $35,000/año que baja el ARO a 0.05 → ALE nuevo $15,000
+Ahorro $45,000 &gt; costo $35,000 → el control SE JUSTIFICA.</pre></div>
+          <div class="callout"><b>Trampa clásica:</b> si el control cuesta más que lo que ahorra en ALE, la respuesta correcta suele ser aceptar el riesgo o transferirlo (seguro), no comprarlo. El examen castiga gastar sin justificar.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l2">
+          <div class="lesson-top"><h4>Dominio 2 — Seguridad de activos (10%)</h4><span class="tag">Gobierno del dato</span></div>
+          <p><b>Conceptos clave:</b> clasificación de datos (comercial: confidencial / propietario / interno / público; gobierno: top secret → sin clasificar), roles del dato — el <b>dueño</b> clasifica y autoriza acceso, el <b>custodio</b> implementa los controles (suele ser IT), el <b>steward</b> vela por la calidad —, ciclo de vida completo (crear, almacenar, usar, compartir, archivar, destruir), retención y disposición, sanitización de medios NIST SP 800-88 (<b>Clear, Purge, Destroy</b>), privacidad desde el diseño y minimización, DRM, DLP y CASB.</p>
+          <div class="callout warn"><b>Trampa clásica:</b> “¿Quién decide la clasificación de un dato?” — el dueño del dato (el negocio), nunca el custodio ni el administrador del sistema. En una aseguradora: el área dueña de las reclamaciones clasifica; tu equipo protege.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l3">
+          <div class="lesson-top"><h4>Dominio 3 — Arquitectura e ingeniería de seguridad (13%)</h4><span class="tag">Modelos y cripto</span></div>
+          <p><b>Conceptos clave:</b> modelos de seguridad — <b>Bell-LaPadula</b> (confidencialidad: ni leer hacia arriba ni escribir hacia abajo), <b>Biba</b> (integridad: lo inverso), <b>Clark-Wilson</b> (integridad comercial con transacciones bien formadas), <b>Brewer-Nash / Muralla China</b> (conflicto de interés) —, TCB y anillos de protección, criptografía simétrica (AES) vs. asimétrica (RSA, Diffie-Hellman), hash (SHA-256), firmas digitales, PKI y certificados, TLS, gestión de llaves, TPM y arranque seguro, y seguridad física: CPTED, clases de fuego y agentes extintores, control de acceso físico.</p>
+          <div class="callout"><b>Trampa clásica:</b> confundir Bell-LaPadula con Biba. Frase para no fallar: “LaPadula protege secretos (confidencialidad); Biba protege la verdad (integridad)”.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l4">
+          <div class="lesson-top"><h4>Dominio 4 — Seguridad de redes y comunicaciones (13%)</h4><span class="tag green">Tu refuerzo cruzado</span></div>
+          <p><b>Conceptos clave:</b> modelos OSI y TCP/IP, IPsec (AH vs. ESP; modo túnel vs. transporte), TLS 1.2/1.3 y SSH, tipos de firewall (filtrado de paquetes, stateful, proxy, NGFW, WAF), segmentación y microsegmentación, NAC con 802.1X, Wi-Fi WPA2/WPA3 y EAP, VPN sitio a sitio y de acceso remoto, defensa contra DDoS, seguridad de voz y multimedia.</p>
+          <div class="callout"><b>Este dominio se estudia dos veces sin darte cuenta:</b> es el corazón del CCNA y de tus Fases 1–2 de pentest. Cuando domines subnetting, VLAN y ACL en Cisco, la mitad del Dominio 4 ya es tuya.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="cisco">Reforzar con Cisco CCNA</button><button class="btn small" data-jump="ruta">Ver Fases 1–2 de pentest</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l5">
+          <div class="lesson-top"><h4>Dominio 5 — Identidad y gestión de acceso, IAM (13%)</h4><span class="tag">Identidad</span></div>
+          <p><b>Conceptos clave:</b> identificación, autenticación, autorización y rendición de cuentas; factores (algo que sabes, tienes, eres, y dónde estás); biometría — FAR, FRR y CER (menor CER, mejor sistema) —; Kerberos (AS, TGS y tickets); SSO y federación: SAML (aserciones, IdP y SP), OAuth 2.0 (autorización delegada) y OpenID Connect (identidad sobre OAuth); modelos de control de acceso MAC, DAC, RBAC y ABAC; ciclo de vida de la identidad (alta, cambio de rol, baja — <i>joiner-mover-leaver</i>); revisiones y recertificación de accesos; PAM y bóvedas de credenciales privilegiadas.</p>
+          <div class="callout warn"><b>Trampa clásica:</b> OAuth por sí solo NO autentica: autoriza. La identidad llega con OpenID Connect. Y en el examen, “quién eres” (identificación) siempre va antes de “pruébalo” (autenticación).</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l6">
+          <div class="lesson-top"><h4>Dominio 6 — Evaluación y pruebas de seguridad (12%)</h4><span class="tag green">Tu terreno</span></div>
+          <p><b>Conceptos clave:</b> diferencia entre escaneo de vulnerabilidades (mejor con credenciales) y pentest; pruebas por nivel de conocimiento (sin conocimiento, parcial, total — “caja negra/gris/blanca”); equipos Red, Blue y Purple; auditorías internas y externas; informes <b>SOC 1, SOC 2 y SOC 3</b> — Tipo I evalúa el diseño en un momento, Tipo II la efectividad operativa durante un período —; revisión de logs y cuentas; indicadores KPI/KRI; pruebas de ingeniería social autorizadas.</p>
+          <div class="callout"><b>Este dominio ya lo practicas:</b> es el mismo músculo de los módulos de Pentest empresa, ROE y Escenarios de este centro. Repásalos y traduce cada actividad a “qué pregunta de examen responde esto”.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="empresa">Ir a Pentest empresa</button><button class="btn small" data-jump="roe">Ver ROE y alcance</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l7">
+          <div class="lesson-top"><h4>Dominio 7 — Operaciones de seguridad (13%)</h4><span class="tag">El día a día</span></div>
+          <p><b>Conceptos clave:</b> respuesta a incidentes (preparación → detección y análisis → contención, erradicación y recuperación → lecciones aprendidas); forense digital: <b>orden de volatilidad</b> (registros y caché, RAM, red, disco), cadena de custodia, imagen bit a bit con bloqueador de escritura; regla de respaldos 3-2-1; RAID 0/1/5/6/10 y alta disponibilidad; gestión de parches y de cambios; registro centralizado, SIEM y SOAR; separación de funciones, privilegio mínimo operativo y rotación de personal.</p>
+          <div class="callout warn"><b>Trampa clásica:</b> ante un equipo comprometido con evidencia, lo primero NO es apagarlo: es preservar la evidencia volátil. El examen premia contener sin destruir la prueba.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c1l8">
+          <div class="lesson-top"><h4>Dominio 8 — Seguridad en el desarrollo de software (10%)</h4><span class="tag">DevSecOps</span></div>
+          <p><b>Conceptos clave:</b> SDLC seguro en cada fase, modelos cascada, ágil y DevSecOps; OWASP Top 10 como lenguaje común con desarrollo (lo practicas en DVWA); validación de entrada y consultas parametrizadas contra inyección; firma de código y cadena de suministro; seguridad de APIs (autenticación, autorización por objeto, límites de velocidad); seguridad de bases de datos (vistas, cifrado, inferencia y agregación); tipos de malware; modelos de madurez como OWASP SAMM.</p>
+          <div class="callout"><b>Conexión directa:</b> cada vulnerabilidad de tu tabla DVWA (Fase 3.4) es una respuesta del Dominio 8 esperando su pregunta. Estudia causa raíz y mitigación, no el payload.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="ruta">Ir a la Fase 3 (DVWA)</button></div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+
+      <h3>Plan integrado: CISSP + Cisco + Pentest (12 semanas)</h3>
+      <p class="muted">Tres rutas en paralelo sin volverte loco: cada semana avanza un dominio CISSP, un bloque Cisco y un bloque de lab. El examen CISSP va primero porque su material alimenta a los otros dos.</p>
+      <table class="table">
+        <tr><th>Semanas</th><th>CISSP</th><th>Cisco CCNA</th><th>Pentest / lab</th></tr>
+        <tr><td>1–2</td><td>Dominios 1 y 2 + cálculo ALE</td><td>Modelo OSI y subnetting IPv4</td><td>Armar el lab + Fase 1</td></tr>
+        <tr><td>3–4</td><td>Dominio 3 (modelos y cripto)</td><td>Switching, VLAN y STP</td><td>Fase 2: Nmap y enumeración</td></tr>
+        <tr><td>5–6</td><td>Dominios 4 y 5</td><td>Routing estático y OSPF</td><td>Fase 3: DVWA + Burp</td></tr>
+        <tr><td>7–8</td><td>Dominio 6 (tu terreno)</td><td>Servicios IP y seguridad</td><td>Escenarios A y B</td></tr>
+        <tr><td>9–10</td><td>Dominios 7 y 8</td><td>Automatización + repaso de comandos</td><td>Fases 4–5: GOAD y BloodHound</td></tr>
+        <tr><td>11</td><td>Simulacros tipo CAT (sin volver atrás)</td><td>Simulacro CCNA y subnetting contra reloj</td><td>Mini-pentest completo en lab</td></tr>
+        <tr><td>12</td><td><b>Examen CISSP</b></td><td>Repaso final y examen CCNA</td><td>Reporte final del lab</td></tr>
+      </table>
+      <div class="callout"><b>El día del examen:</b> el CAT no deja regresar ni marcar para después. Descarta dos opciones, piensa como gerente (“¿qué protege el negocio y cumple la política?”) y no pelees con una pregunta: si no sale en 90 segundos, elige la mejor y sigue. El algoritmo se calibra con tus primeras respuestas; respira.</div>
+      <div class="callout warn"><b>Material de estudio sugerido:</b> el libro oficial de estudio CISSP de ISC2/Sybex y sus exámenes de práctica como columna vertebral; resúmenes de dominios para repaso; y este centro para la parte aplicada. Nada sustituye hacer cientos de preguntas de práctica con explicación.</div>
+    </section>
+
+    <!-- CISCO CCNA -->
+    <section class="card section hidden" id="cisco">
+      <h2>Cisco CCNA 200-301: la red por dentro</h2>
+      <p class="muted">El CCNA es el examen de redes de Cisco y el complemento perfecto de tu CISSP: lo que el Dominio 4 describe en teoría, aquí lo configuras. Está pensado para dominar subnetting, switching, routing y los comandos IOS que el examen pide de memoria aplicada.</p>
+
+      <h3>El examen, sin humo</h3>
+      <table class="table">
+        <tr><th>Tema oficial</th><th>Peso</th><th>Tu lección</th></tr>
+        <tr><td>Fundamentos de red</td><td>20%</td><td>Lecciones 1–3</td></tr>
+        <tr><td>Acceso a la red</td><td>20%</td><td>Lección 4</td></tr>
+        <tr><td>Conectividad IP</td><td>25%</td><td>Lección 5</td></tr>
+        <tr><td>Servicios IP</td><td>10%</td><td>Lección 6</td></tr>
+        <tr><td>Fundamentos de seguridad</td><td>15%</td><td>Lección 7</td></tr>
+        <tr><td>Automatización y programabilidad</td><td>10%</td><td>Lección 8</td></tr>
+      </table>
+      <p class="small muted">Formato: unas 100–120 preguntas en 120 minutos, examen único 200-301. Si tu examen Cisco fuera otro (por ejemplo CyberOps Associate, ruta de seguridad), dímelo: la base de redes y seguridad de aquí es la misma y ajustamos el énfasis.</p>
+
+      <article class="phase" style="margin-top:14px">
+        <div class="phase-head"><div class="phase-num">N</div><div><h3>Las 8 lecciones CCNA</h3><p>Comandos IOS copiables para practicar en Packet Tracer o en tu lab. Marca cada lección al cerrarla.</p></div></div>
+
+        <div class="lesson" data-lesson="c2l1">
+          <div class="lesson-top"><h4>N1 — Modelo OSI, TCP/IP y encapsulación</h4><span class="tag green">Fundamento</span></div>
+          <table class="table"><tr><th>Capa OSI</th><th>Función</th><th>Unidad (PDU)</th><th>Ejemplo</th></tr>
+          <tr><td>7 Aplicación</td><td>Servicios al usuario</td><td>Datos</td><td>HTTP, DNS, SMTP</td></tr>
+          <tr><td>6 Presentación</td><td>Formato y cifrado</td><td>Datos</td><td>TLS, JPEG</td></tr>
+          <tr><td>5 Sesión</td><td>Diálogo entre apps</td><td>Datos</td><td>RPC, NetBIOS</td></tr>
+          <tr><td>4 Transporte</td><td>Extremo a extremo</td><td>Segmento</td><td>TCP / UDP</td></tr>
+          <tr><td>3 Red</td><td>Enrutamiento lógico</td><td>Paquete</td><td>IP, ICMP</td></tr>
+          <tr><td>2 Enlace</td><td>Entrega en el enlace</td><td>Trama</td><td>Ethernet, MAC</td></tr>
+          <tr><td>1 Física</td><td>Señales y medios</td><td>Bits</td><td>Cobre, fibra, radio</td></tr></table>
+          <p><b>Clave de examen:</b> al bajar, cada capa añade su encabezado (encapsulación); al subir, se retiran (desencapsulación). TCP es confiable y orientado a conexión; UDP es rápido y sin garantías — igual que viste en la lección 1.2 de la ruta.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l2">
+          <div class="lesson-top"><h4>N2 — Subnetting IPv4 sin llorar</h4><span class="tag red">Core skill</span></div>
+          <p>El examen vive o muere aquí. Método del <b>número mágico</b>: en el octeto interesante, bloque = 256 − valor de la máscara. Hosts útiles por subred = 2^(bits de host) − 2.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># Ejemplo resuelto: 192.168.1.70/26
+Máscara /26 = 255.255.255.192  → bloque = 256 − 192 = 64
+Subredes en el 4.º octeto: .0 | .64 | .128 | .192
+192.168.1.70 cae en la subred .64
+Broadcast: .127   Rango útil: .65 – .126   Hosts: 2^6 − 2 = 62
+
+# Pregunta tipo examen: ¿192.168.10.35/27 y 192.168.10.60/27
+# están en la misma subred?  /27 → bloque 32 → subred .32 (.33–.62)
+# 35 y 60 están AMBOS en .32 → Sí, misma subred.
+
+# Tabla de bolsillo (hosts útiles)
+ /24=254  /25=126  /26=62  /27=30  /28=14  /29=6  /30=2</pre></div>
+          <div class="callout"><b>Regla /30:</b> solo 2 hosts útiles — por eso se usa en enlaces punto a punto entre routers. Si un examen te da un /30 para una LAN de 40 personas, la respuesta es “no cabe”.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l3">
+          <div class="lesson-top"><h4>N3 — IPv6 esencial</h4><span class="tag">Fundamento</span></div>
+          <table class="table"><tr><th>Tipo</th><th>Prefijo</th><th>Uso</th></tr>
+          <tr><td>Global unicast</td><td>2000::/3</td><td>Direcciones “públicas” IPv6</td></tr>
+          <tr><td>Link-local</td><td>FE80::/10</td><td>Solo en el enlace; automática, obligatoria</td></tr>
+          <tr><td>Unique local</td><td>FC00::/7</td><td>El “privado” de IPv6</td></tr>
+          <tr><td>Multicast</td><td>FF00::/8</td><td>Uno a muchos (no existe broadcast)</td></tr>
+          <tr><td>Loopback</td><td>::1</td><td>La propia máquina</td></tr></table>
+          <p><b>Conceptos clave:</b> cada subred IPv6 es /64 por diseño; la dirección se autoconfigura con SLAAC o DHCPv6; NDP reemplaza a ARP (descubre vecinos y routers); no hay NAT por defecto: la seguridad la ponen el firewall y las ACL, no la traducción.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l4">
+          <div class="lesson-top"><h4>N4 — Switching: VLAN, trunk y STP</h4><span class="tag red">Hands-on</span></div>
+          <p>Un switch aprende direcciones MAC y separa dominios de broadcast con VLAN. El trunk lleva varias VLAN entre switches etiquetando con <b>802.1Q</b>. STP evita bucles de capa 2 eligiendo un puente raíz y bloqueando rutas redundantes.</p>
+          <div class="code"><button class="copy">Copiar</button><pre>enable
+configure terminal
+vlan 10
+ name USUARIOS
+vlan 20
+ name SERVIDORES
+interface gigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+interface range gigabitEthernet0/2-10
+ switchport mode access
+ switchport access vlan 10
+end
+show vlan brief
+show interfaces trunk</pre></div>
+          <p><b>Pregunta tipo examen:</b> dos PCs en VLAN distintas no se hablan sin un router o switch capa 3 de por medio — la VLAN aísla el broadcast. Eso es segmentación, el mismo concepto de tu lección 1.5 de la ruta.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l5">
+          <div class="lesson-top"><h4>N5 — Routing: tabla de rutas, estático y OSPF</h4><span class="tag red">Lo más pesado (25%)</span></div>
+          <p>El router elige ruta por: 1) prefijo más largo, 2) <b>distancia administrativa</b> (qué tanto confía en la fuente: menor gana), 3) métrica del protocolo.</p>
+          <table class="table"><tr><th>Fuente de ruta</th><th>Distancia adm.</th></tr>
+          <tr><td>Conectada directamente</td><td>0</td></tr>
+          <tr><td>Estática</td><td>1</td></tr>
+          <tr><td>eBGP</td><td>20</td></tr>
+          <tr><td>EIGRP interno</td><td>90</td></tr>
+          <tr><td>OSPF</td><td>110</td></tr>
+          <tr><td>RIP</td><td>120</td></tr>
+          <tr><td>iBGP</td><td>200</td></tr></table>
+          <div class="code"><button class="copy">Copiar</button><pre># Ruta estática y ruta por defecto (IPv4 e IPv6)
+ip route 192.168.30.0 255.255.255.0 192.168.1.1
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
+ipv6 route ::/0 2001:db8:1::1
+
+# OSPFv2 de área única (el del CCNA)
+router ospf 1
+ network 192.168.10.0 0.0.0.255 area 0
+ passive-interface gigabitEthernet0/1
+show ip route
+show ip ospf neighbor</pre></div>
+          <div class="callout warn"><b>Ojo con la wildcard:</b> en <span class="kbd">network</span> de OSPF y en las ACL se usa máscara wildcard (lo inverso de la máscara de subred): /24 → 0.0.0.255. Confundirlas es el error número uno del CCNA.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l6">
+          <div class="lesson-top"><h4>N6 — Servicios IP: DHCP, DNS, NAT, NTP, syslog</h4><span class="tag">Servicios</span></div>
+          <p><b>Conceptos clave:</b> DHCP reparte dirección, máscara, gateway y DNS (proceso DORA); DNS traduce nombres; NTP sincroniza relojes (sin hora correcta no hay forense ni Kerberos sanos); SNMP monitorea; syslog centraliza eventos; SSH reemplaza a Telnet porque cifra. NAT/PAT traduce privadas a públicas.</p>
+          <div class="code"><button class="copy">Copiar</button><pre># NAT con sobrecarga (PAT): toda la LAN sale por una IP pública
+access-list 1 permit 192.168.10.0 0.0.0.255
+ip nat inside source list 1 interface gigabitEthernet0/0 overload
+interface gigabitEthernet0/0
+ ip nat outside
+interface gigabitEthernet0/1
+ ip nat inside
+show ip nat translations</pre></div>
+          <p><b>Para tu sombrero de CISO:</b> syslog + NTP es la base de cualquier investigación: logs sin hora sincronizada no sirven como evidencia. Es el Dominio 7 del CISSP operando en Cisco.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l7">
+          <div class="lesson-top"><h4>N7 — Seguridad en la red Cisco: ACL, port security y AAA</h4><span class="tag green">Puente al CISSP D4/D5</span></div>
+          <div class="code"><button class="copy">Copiar</button><pre># ACL estándar (filtra solo por origen) — cerca del destino
+access-list 10 permit 192.168.10.0 0.0.0.255
+
+# ACL extendida (origen, destino, protocolo y puerto) — cerca del origen
+access-list 100 permit tcp 192.168.10.0 0.0.0.255 any eq 443
+access-list 100 deny ip any any log
+
+# Seguridad de puerto: pega la MAC y apaga ante intruso
+interface gigabitEthernet0/5
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown</pre></div>
+          <p><b>Conceptos clave:</b> DHCP snooping y Dynamic ARP Inspection frenan suplantación en la LAN; AAA separa autenticación, autorización y contabilidad (RADIUS/TACACS+); VPN sitio a sitio y de acceso remoto; WPA2/WPA3 en inalámbrico. Todo esto es el Dominio 4 y 5 del CISSP… con comandos.</p>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+
+        <div class="lesson" data-lesson="c2l8">
+          <div class="lesson-top"><h4>N8 — Automatización y programabilidad</h4><span class="tag">10% del examen</span></div>
+          <p><b>Conceptos clave:</b> en SDN se separan el plano de control (decide) y el plano de datos (reenvía), con un controlador central; APIs REST (HTTP + JSON) configuran y consultan la red; herramientas como Ansible (sin agentes, YAML), Puppet y Chef automatizan la configuración; JSON es el formato que debes saber leer.</p>
+          <div class="code"><button class="copy">Copiar</button><pre>{
+  "interface": "GigabitEthernet0/1",
+  "vlan": 10,
+  "mode": "access",
+  "enabled": true
+}
+# Leer JSON es pregunta de examen: claves con ":", objetos con {},
+# listas con [] y booleanos sin comillas.</pre></div>
+          <div class="callout"><b>Por qué te importa:</b> como CISO vas a exigir infraestructura como código y cambios auditables. El CCNA te da el vocabulario; tu experiencia pone el gobierno.</div>
+          <button class="btn small mark">Marcar completada</button>
+        </div>
+      </article>
+    </section>
+
     <!-- PLAN 12 SEMANAS -->
     <section class="card section hidden" id="plan12">
       <h2>Plan de 12 semanas para salir operativo (nivel CISO)</h2>
       <p class="muted">2–3 sesiones por semana de 90 minutos. Cada semana cierra con un entregable, no solo con “vi un video”. Si una semana no cierra, se repite: así se construye criterio.</p>
+      <p class="muted">Este es el plan de la ruta de pentest. Si estudias <b>CISSP</b> y <b>Cisco CCNA</b> en paralelo, sigue el <b>Plan integrado</b> al final de la sección CISSP: combina las tres rutas semana a semana.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-jump="cissp">Ver plan integrado (CISSP + Cisco + Pentest)</button></div>
       <table class="table">
         <tr><th>Semana</th><th>Foco</th><th>Entregable que guardas</th></tr>
         <tr><td>1</td><td>Linux + redes + metodología</td><td>Cheat sheet propio de 30 comandos con ejemplo</td></tr>
@@ -875,6 +1160,18 @@ grep -R "secreto" .</pre></div>
         <p>Con un hallazgo de tu lab, llena: Título · CVSS y justificación · Evidencia (hora/captura) · Ruta · Impacto para una aseguradora · Mitigación · Dueño · Fecha de retest. Si te falta un campo, te falta evidencia.</p>
       </div>
 
+      <div class="exercise">
+        <h4>Ejercicio 7 — Subnetting contra reloj (Cisco CCNA)</h4>
+        <p>Responde sin calculadora, como en el examen: a) Para <span class="kbd">192.168.1.70/26</span>, ¿cuál es la dirección de red, el broadcast y el rango útil? b) ¿<span class="kbd">192.168.10.35/27</span> y <span class="kbd">192.168.10.60/27</span> están en la misma subred? c) ¿Cuántos hosts útiles da un <span class="kbd">/28</span>?</p>
+        <details><summary>Ver soluciones</summary><p>a) Bloque /26 = 64 → red <b>.64</b>, broadcast <b>.127</b>, útiles <b>.65–.126</b> (62 hosts). b) /27 = bloque 32 → subred .32 cubre .33–.62: 35 y 60 están <b>en la misma subred</b>. c) /28 → 2^4 − 2 = <b>14 hosts</b>. Método: número mágico 256 − máscara, siempre. (Lección N2)</p></details>
+      </div>
+
+      <div class="exercise">
+        <h4>Ejercicio 8 — Actúa como gerente (CISSP Dominio 1)</h4>
+        <p>El ALE por ransomware sobre tu core de pólizas es $60,000/año. Un control cuesta $90,000/año y baja el ALE a $10,000. Un gerente técnico lo compraría sin pensar. ¿Qué hace un CISO con mentalidad CISSP?</p>
+        <details><summary>Respuesta esperada</summary><p>No lo compra con esos números: el control ahorra $50,000 de ALE pero cuesta $90,000. La salida profesional es documentar la decisión: buscar un control más barato, transferir parte del riesgo (seguro cibernético) o aceptar el riesgo con firma de la dirección si está dentro del apetito. El examen premia justificar con riesgo y negocio, no “más seguridad siempre”. (Lección CISSP 1)</p></details>
+      </div>
+
       <h3>Quiz rápido (toca una opción)</h3>
       <div id="quiz"></div>
     </section>
@@ -935,7 +1232,7 @@ Nube: (si aplica) buckets públicos, metadata, claves en repos — solo alcance<
       <div class="callout" style="margin-top:12px"><b>Plantilla por hallazgo:</b> Objetivo (IP de lab) · Puerto/servicio · Evidencia · Impacto · Mitigación · Siguiente paso. Úsala siempre y tu reporte de Fase 6 saldrá casi solo.</div>
     </section>
 
-    <div class="footer">Centro de aprendizaje Red Team — práctica solo en laboratorio aislado. Trae tus salidas y seguimos en clase.</div>
+    <div class="footer">Centro de aprendizaje: Pentest, CISSP y Cisco CCNA — la práctica ofensiva, solo en laboratorio aislado. Trae tus salidas y seguimos en clase.</div>
   </main>
 </div>
 
@@ -1026,7 +1323,21 @@ const gloss=[
   ['LAPS','Solución que rota contraseñas locales de administrador para que no se reutilicen.'],
   ['Retest','Re-prueba tras la corrección para validar con evidencia que el hallazgo cerró.'],
   ['Get Out of Jail Letter','Carta de autorización que el equipo porta durante el ejercicio autorizado.'],
-  ['Superficie de ataque','Todo lo expuesto y alcanzable: IPs, web, APIs, nube, personas y proveedores.']
+  ['Superficie de ataque','Todo lo expuesto y alcanzable: IPs, web, APIs, nube, personas y proveedores.'],
+  ['ALE (pérdida anual esperada)','SLE × ARO: cuánto pierdes al año por un riesgo. La cifra que justifica (o no) comprar un control. (CISSP D1)'],
+  ['BIA','Análisis de impacto al negocio. Define MTD, RTO y RPO, y de ahí nacen el BCP y el DRP. (CISSP D1)'],
+  ['RTO / RPO','RTO: tiempo máximo tolerable para restaurar un servicio. RPO: cuántos datos puedes perder, medido en tiempo hacia atrás. (CISSP D1/D7)'],
+  ['Bell-LaPadula','Modelo de confidencialidad: no leer hacia arriba, no escribir hacia abajo. Su contraparte de integridad es Biba. (CISSP D3)'],
+  ['SOC 2 Tipo II','Informe que evalúa la efectividad operativa de los controles durante un período; el Tipo I solo evalúa el diseño en un momento. (CISSP D6)'],
+  ['Orden de volatilidad','Orden para recolectar evidencia según qué se borra primero: registros y caché, RAM, conexiones de red, disco. (CISSP D7)'],
+  ['CIDR','Notación de prefijo (/24, /26): cuántos bits son de red y cuántos quedan para hosts. Base del subnetting. (CCNA)'],
+  ['VLAN','Red lógica dentro de un switch: separa dominios de broadcast y segmenta sin hardware adicional. (CCNA)'],
+  ['802.1Q','Estándar para etiquetar VLAN en enlaces trunk entre switches. (CCNA)'],
+  ['OSPF','Protocolo de enrutamiento de estado de enlace. Distancia administrativa por defecto: 110. (CCNA)'],
+  ['Distancia administrativa','Qué tanto confía el router en una fuente de ruta: menor gana. Estática 1, OSPF 110, RIP 120. (CCNA)'],
+  ['Máscara wildcard','La inversa de la máscara de subred (/24 → 0.0.0.255). Se usa en ACL y en el comando network de OSPF. (CCNA)'],
+  ['NAT / PAT','NAT traduce direcciones privadas a públicas; PAT (overload) mapea muchas privadas a una sola pública usando puertos. (CCNA)'],
+  ['STP (Spanning Tree)','Protocolo que evita bucles de capa 2 eligiendo un puente raíz y bloqueando rutas redundantes. (CCNA)']
 ];
 const glossList=document.getElementById('glossList');
 function renderGloss(q=''){
@@ -1046,7 +1357,13 @@ const quizData=[
   {q:'Sin ROE firmado, un pentest en producción es…',opts:['Normal si eres el CISO','Un incidente sin autorización formal','Más rápido'],a:1,why:'El ROE y la co-firma de Legal/dueño del activo lo hacen profesional. (ROE)'},
   {q:'Un escáner marca CVSS 9.8 sin explotarlo. Como CISO pides…',opts:['Cerrarlo ya','Evidencia de explotación y contexto de negocio','Ignorarlo'],a:1,why:'Severidad sin evidencia es hipótesis. (Checklists)'},
   {q:'La métrica de que el pentest sirvió es…',opts:['Cantidad de hallazgos','Tasa de remediación con retest en fecha','El PDF más largo'],a:1,why:'Hallazgo sin cierre no mueve el riesgo. Conecta a tu portal. (Empresa)'},
-  {q:'En BloodHound, Shortest Paths to Domain Admins sirve para…',opts:['Decorar el reporte','Priorizar qué permiso corregir primero','Sustituir el escaneo'],a:1,why:'Es la ruta que explicas en español simple al directorio. (Fase 5.4)'}
+  {q:'En BloodHound, Shortest Paths to Domain Admins sirve para…',opts:['Decorar el reporte','Priorizar qué permiso corregir primero','Sustituir el escaneo'],a:1,why:'Es la ruta que explicas en español simple al directorio. (Fase 5.4)'},
+  {q:'Activo de $500,000, factor de exposición 30% y ARO de 0.4. ¿SLE y ALE correctos?',opts:['$50,000 / $20,000','$150,000 / $60,000','$15,000 / $6,000'],a:1,why:'SLE = AV × EF = $150,000. ALE = SLE × ARO = $60,000. (CISSP D1)'},
+  {q:'El modelo Bell-LaPadula protege sobre todo…',opts:['La integridad de los datos','La confidencialidad: ni leer hacia arriba ni escribir hacia abajo','La disponibilidad del sistema'],a:1,why:'Bell-LaPadula es confidencialidad; Biba es su contraparte de integridad. (CISSP D3)'},
+  {q:'¿Qué diferencia un informe SOC 2 Tipo II de uno Tipo I?',opts:['El Tipo II evalúa la efectividad operativa durante un período','El Tipo I cubre más controles','No hay diferencia real'],a:0,why:'Tipo I: diseño en un momento. Tipo II: operación efectiva en el tiempo. (CISSP D6)'},
+  {q:'¿Cuántos hosts útiles ofrece una red /27?',opts:['30','32','62'],a:0,why:'Quedan 5 bits de host: 2^5 − 2 = 30. (CCNA N2)'},
+  {q:'¿Cuál es la distancia administrativa por defecto de OSPF?',opts:['90','110','120'],a:1,why:'EIGRP interno 90, OSPF 110, RIP 120. Menor distancia gana. (CCNA N5)'},
+  {q:'En un trunk entre switches, las VLAN se etiquetan con…',opts:['Solo Cisco ISL','El estándar 802.1Q','El protocolo DTP'],a:1,why:'802.1Q inserta la etiqueta VLAN; DTP negocia el trunk, no etiqueta. (CCNA N4)'}
 ];
 const quizEl=document.getElementById('quiz');
 if(quizEl){
